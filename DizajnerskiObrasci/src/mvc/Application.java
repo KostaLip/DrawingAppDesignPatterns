@@ -1,10 +1,23 @@
 package mvc;
 
+import javax.swing.JFrame;
+
 public class Application {
 
 	public static void main(String[] args) {
-		System.out.println("Dobrodošli na vežbe iz predmeta Dizajnerski obrasci.");
-
+		
+		DrawingModel model = new DrawingModel();
+		DrawingFrame frame = new DrawingFrame();
+		DrawingController controller = new DrawingController(model, frame);
+		
+		frame.getView().setModel(model);
+		frame.setController(controller);
+		
+		frame.setBounds(100, 100, 950, 650);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setTitle("Kosta Bjelogrlic IT31-2021");
+		frame.setVisible(true);
+		
 	}
 
 }
