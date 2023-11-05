@@ -28,14 +28,14 @@ import java.awt.event.ActionEvent;
 public class DlgLine extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	protected JTextArea txtStartX = new JTextArea();
-	protected JTextArea txtStartY = new JTextArea();
-	protected JTextArea txtEndX = new JTextArea();
-	protected JTextArea txtEndY = new JTextArea();
+	public JTextArea txtStartX = new JTextArea();
+	public JTextArea txtStartY = new JTextArea();
+	public JTextArea txtEndX = new JTextArea();
+	public JTextArea txtEndY = new JTextArea();
 	Color lineColor;
 	private Line line = null;
 	private boolean colorChanged = true;
-	protected JButton btnColor = new JButton("CHOSE COLOR");
+	public JButton btnColor = new JButton("CHOSE COLOR");
 	private int maxX = 1905;
 	private int maxY = 885;
 

@@ -33,10 +33,10 @@ public class DlgCircle extends JDialog {
 	Circle circle = null;
 	private Color circleColor ;
 	private boolean colorChanged = true;
-	JButton btnColor = new JButton("CHOSE COLOR");
+	public JButton btnColor = new JButton("CHOSE COLOR");
 	private int maxX = 1905;
 	private int maxY = 885;
-	protected JButton btnInnerColor = new JButton("InnerColor");
+	public JButton btnInnerColor = new JButton("InnerColor");
 	private boolean innerColorChanged;
 	private Color circleInnerColor;
 

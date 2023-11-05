@@ -28,12 +28,12 @@ import java.awt.event.ActionEvent;
 public class DlgPoint extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	protected JTextArea txtX = new JTextArea();
-	protected JTextArea txtY = new JTextArea();
+	public JTextArea txtX = new JTextArea();
+	public JTextArea txtY = new JTextArea();
 	Point point = null;
 	Color pointColor;
 	private boolean colorChanged = true;
-	JButton btnColor = new JButton("CHOSE COLOR");
+	public JButton btnColor = new JButton("CHOSE COLOR");
 	private int maxX = 1905;
 	private int maxY = 885;
 

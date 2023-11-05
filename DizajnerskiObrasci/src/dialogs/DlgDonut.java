@@ -32,10 +32,10 @@ public class DlgDonut extends JDialog {
 	public JTextArea txtCentarY = new JTextArea();
 	public JTextArea txtRadius = new JTextArea();
 	public JTextArea txtInnerRadius = new JTextArea();
-	JButton btnInnerColor;
+	public JButton btnInnerColor;
 	Donut donut = null;
 	private Color donutColor, donutInnerColor;
-	JButton btnColor = new JButton("CHOSE COLOR");
+	public JButton btnColor = new JButton("CHOSE COLOR");
 	private boolean colorChanged = true;
 	private int maxX = 1905;
 	private int maxY = 885;

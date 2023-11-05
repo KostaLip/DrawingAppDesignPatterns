@@ -23,11 +23,6 @@ import geometry.Donut;
 import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
-import gui.DlgCircle;
-import gui.DlgDonut;
-import gui.DlgLine;
-import gui.DlgPoint;
-import gui.DlgRectangle;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,10 +52,10 @@ public class DrawingFrame extends JFrame {
 	public Color innerColor = Color.WHITE;
 	
 	public DrawingFrame() {
-		view.setBorder(new LineBorder(new Color(0, 0, 0), 4));
+		view.setBorder(new LineBorder(new Color(0, 0, 0), 1));
 		
 		//PNL BTNS
-		view.setBackground(Color.YELLOW);
+		view.setBackground(Color.WHITE);
 		pnlBtns.setBackground(Color.PINK);
 		GridBagLayout gbl_pnlBtns = new GridBagLayout();
 		gbl_pnlBtns.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -82,6 +77,12 @@ public class DrawingFrame extends JFrame {
 
 		//TOGLE BTN POINT
 		buttonGroup.add(tglBtnPoint);
+		tglBtnPoint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.setPointsToNull();
+				controller.deselect();
+			}
+		});
 		tglBtnPoint.setBackground(Color.LIGHT_GRAY);
 		GridBagConstraints gbc_tglBtnPoint = new GridBagConstraints();
 		gbc_tglBtnPoint.insets = new Insets(0, 0, 5, 5);
@@ -92,6 +93,12 @@ public class DrawingFrame extends JFrame {
 
 		//TOGLE BTN LINE
 		buttonGroup.add(tglBtnLine);
+		tglBtnLine.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.setPointsToNull();
+				controller.deselect();
+			}
+		});
 		tglBtnLine.setBackground(Color.LIGHT_GRAY);
 		GridBagConstraints gbc_tglBtnLine = new GridBagConstraints();
 		gbc_tglBtnLine.insets = new Insets(0, 0, 5, 5);
@@ -102,6 +109,12 @@ public class DrawingFrame extends JFrame {
 
 		//TOGLE BTN RECTANGLE
 		buttonGroup.add(tglBtnRectangle);
+		tglBtnRectangle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.setPointsToNull();
+				controller.deselect();
+			}
+		});
 		tglBtnRectangle.setBackground(Color.LIGHT_GRAY);
 		GridBagConstraints gbc_tglBtnRectangle = new GridBagConstraints();
 		gbc_tglBtnRectangle.insets = new Insets(0, 0, 5, 5);
@@ -112,6 +125,12 @@ public class DrawingFrame extends JFrame {
 
 		//TOGLE BTN CIRCLE
 		buttonGroup.add(tglBtnCircle);
+		tglBtnCircle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.setPointsToNull();
+				controller.deselect();
+			}
+		});
 		tglBtnCircle.setBackground(Color.LIGHT_GRAY);
 		GridBagConstraints gbc_tglBtnCircle = new GridBagConstraints();
 		gbc_tglBtnCircle.insets = new Insets(0, 0, 5, 5);
@@ -122,6 +141,12 @@ public class DrawingFrame extends JFrame {
 
 		//TOGLE BTN DONUT
 		buttonGroup.add(tglBtnDonut);
+		tglBtnDonut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.setPointsToNull();
+				controller.deselect();
+			}
+		});
 		tglBtnDonut.setBackground(Color.LIGHT_GRAY);
 		GridBagConstraints gbc_tglBtnDonut = new GridBagConstraints();
 		gbc_tglBtnDonut.insets = new Insets(0, 0, 5, 5);
@@ -169,6 +194,11 @@ public class DrawingFrame extends JFrame {
 		gbc_tglBtnSelect.gridy = 1;
 		pnlBtns.add(tglBtnSelect, gbc_tglBtnSelect);
 		tglBtnSelect.setPreferredSize(new Dimension(110, 30));
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.deleteSelectedShape();
+			}
+		});
 		
 		//TOGLE BTN DELETE
 		btnDelete.setBackground(Color.GRAY);
@@ -179,6 +209,11 @@ public class DrawingFrame extends JFrame {
 		gbc_tglBtnDelete.gridy = 1;
 		pnlBtns.add(btnDelete, gbc_tglBtnDelete);
 		btnDelete.setPreferredSize(new Dimension(110, 30));
+		btnEdit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.editSelectedShape();
+			}
+		});
 
 		//TOGLE BTN EDIT
 		btnEdit.setBackground(Color.GRAY);
