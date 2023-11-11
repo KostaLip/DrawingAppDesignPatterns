@@ -102,6 +102,7 @@ public class Circle extends Shape {
 	}
 
 	public String toString() {
-		return "Center=" + center + ", radius=" + radius;
+		return "Circle->Center:" + "X=" + center.getX() + ",Y=" + center.getY() + ",radius=" + radius
+				+ " Color:" + getColor() + ",InnerColor:" + getInnerColor();
 	}
 }

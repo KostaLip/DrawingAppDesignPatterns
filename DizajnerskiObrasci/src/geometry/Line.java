@@ -95,6 +95,7 @@ public class Line extends Shape {
 	}
 
 	public String toString() {
-		return startPoint + "-- >" + endPoint;
+		return "Line->StartPoint:X=" + startPoint.getX() + ",Y=" + startPoint.getY() + ";"
+	+ "EndPoint:X=" + endPoint.getX() + ",Y=" + endPoint.getY() + " Color:" + getColor();
 	}
 }

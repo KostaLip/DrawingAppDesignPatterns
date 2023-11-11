@@ -120,6 +120,7 @@ public class Rectangle extends Shape {
 	}
 
 	public String toString() {
-		return "Upper left point:" + upperLeftPoint + ", width =" + width + ",height = " + height;
+		return "Rectangle->UpperLeftPoint:X=" + upperLeftPoint.getX() + ",Y=" + upperLeftPoint.getY() + 
+				",width=" + width + ",height=" + height + " Color:" + getColor() + ",InnerColor:" + getInnerColor();
 	}
 }

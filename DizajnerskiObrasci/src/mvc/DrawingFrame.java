@@ -14,6 +14,8 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -30,6 +32,8 @@ import java.awt.event.MouseAdapter;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
+import javax.swing.border.BevelBorder;
+import java.awt.SystemColor;
 
 public class DrawingFrame extends JFrame {
 
@@ -50,13 +54,20 @@ public class DrawingFrame extends JFrame {
 	private final JButton btnInnerColor = new JButton("INNER COLOR");
 	public Color color = Color.BLACK;
 	public Color innerColor = Color.WHITE;
+	private final JPanel pnlCommandList = new JPanel();
+	public JTextArea commandList = new JTextArea(40,25);
+	private JScrollPane scrollList = new JScrollPane(commandList);
+	private final JPanel pnlOptions = new JPanel();
+	private final JButton btnUndo = new JButton("UNDO");
+	private final JButton btnRedo = new JButton("REDO");
 	
 	public DrawingFrame() {
 		view.setBorder(new LineBorder(new Color(0, 0, 0), 1));
 		
 		//PNL BTNS
 		view.setBackground(Color.WHITE);
-		pnlBtns.setBackground(Color.PINK);
+		pnlBtns.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
+		pnlBtns.setBackground(SystemColor.inactiveCaption);
 		GridBagLayout gbl_pnlBtns = new GridBagLayout();
 		gbl_pnlBtns.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_pnlBtns.rowHeights = new int[] { 0, 0, 0, 0 };
@@ -248,6 +259,37 @@ public class DrawingFrame extends JFrame {
 		//ADDING VIEW AND BtnPane to ContentPane
 		getContentPane().add(view, BorderLayout.CENTER);
 		getContentPane().add(pnlBtns, BorderLayout.NORTH);
+		pnlCommandList.setBackground(SystemColor.activeCaption);
+		
+		//ADDING COMMANDLIST ON WEST
+		commandList.setEditable(false);
+		pnlCommandList.add(scrollList);
+		pnlCommandList.setBorder(new BevelBorder(BevelBorder.RAISED, null, null, null, null));
+		getContentPane().add(pnlCommandList, BorderLayout.WEST);
+		pnlOptions.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
+		pnlOptions.setBackground(SystemColor.inactiveCaption);
+		
+		//ADDING OPTIONS ON SOUTH 
+		getContentPane().add(pnlOptions, BorderLayout.SOUTH);
+		//BTN UNDO
+		btnUndo.setBackground(Color.GRAY);
+		btnUndo.setPreferredSize(new Dimension(110, 30));
+		btnUndo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.undo();
+			}
+		});
+		pnlOptions.add(btnUndo);
+		
+		//BTN REDO
+		btnRedo.setBackground(Color.GRAY);
+		btnRedo.setPreferredSize(new Dimension(110,30));
+		btnRedo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.redo();
+			}
+		});
+		pnlOptions.add(btnRedo);
 	}
 	
 	public DrawingView getView() {
