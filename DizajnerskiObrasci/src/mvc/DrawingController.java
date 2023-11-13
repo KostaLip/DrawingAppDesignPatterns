@@ -39,6 +39,8 @@ public class DrawingController {
 	private ArrayList<String> commands = new ArrayList<String>();
 	private Stack<Shape> deletedShapes = new Stack<Shape>();
 	private Stack<Shape> tempShapes = new Stack<Shape>();
+	private Stack<Integer> indexs = new Stack<Integer>();
+	private Stack<Shape> tempDeletedShapes = new Stack<Shape>();
 
 	public DrawingController(DrawingModel model, DrawingFrame frame) {
 		this.model = model;
@@ -77,6 +79,7 @@ public class DrawingController {
 				command = "Deleted!" + selectedShape + "\n";
 				frame.commandList.append(command);
 				commands.add(command);
+				indexs.push(model.getShapes().indexOf(selectedShape));
 				model.getShapes().remove(selectedShape);
 				deselect();
 				frame.repaint();
@@ -302,7 +305,9 @@ public class DrawingController {
 			} else if (readCommand().equals("Deleted")) {
 				tempCommands.add(commands.remove(commands.size() - 1));
 				removeCommandsFromList();
-				RemoveShapeCmd rsc = new RemoveShapeCmd(deletedShapes.pop(), model);
+				deletedShapes.peek().setSelected(false);
+				tempDeletedShapes.push(deletedShapes.peek());
+				RemoveShapeCmd rsc = new RemoveShapeCmd(deletedShapes.pop(), model, indexs.pop());
 				rsc.unexecute();
 				frame.repaint();
 			}
@@ -317,9 +322,12 @@ public class DrawingController {
 				AddShapeCmd asc = new AddShapeCmd(tempShapes.pop(), model);
 				asc.execute();
 				frame.repaint();
-			} else if(readUndoCommand().equals("Deleted")) {
-				commands.add(tempCommands.remove(tempCommands.size()-1));
-				RemoveShapeCmd rsc = new RemoveShapeCmd(deletedShapes.pop(), model);
+			} else if (readUndoCommand().equals("Deleted")) {
+				commands.add(tempCommands.remove(tempCommands.size() - 1));
+				removeCommandsFromList();
+				deletedShapes.push(tempDeletedShapes.peek());
+				indexs.push(model.getShapes().indexOf(tempDeletedShapes.peek()));
+				RemoveShapeCmd rsc = new RemoveShapeCmd(tempDeletedShapes.pop(), model, 0);
 				rsc.execute();
 				frame.repaint();
 			}
