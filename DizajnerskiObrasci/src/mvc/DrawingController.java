@@ -303,6 +303,7 @@ public class DrawingController {
 				asc.unexecute();
 				frame.repaint();
 			} else if (readCommand().equals("Deleted")) {
+				try {
 				tempCommands.add(commands.remove(commands.size() - 1));
 				removeCommandsFromList();
 				deletedShapes.peek().setSelected(false);
@@ -310,6 +311,9 @@ public class DrawingController {
 				RemoveShapeCmd rsc = new RemoveShapeCmd(deletedShapes.pop(), model, indexs.pop());
 				rsc.unexecute();
 				frame.repaint();
+				} catch(IndexOutOfBoundsException e) {
+					
+				}
 			}
 		}
 	}
