@@ -91,7 +91,6 @@ public class DrawingFrame extends JFrame {
 		tglBtnPoint.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				controller.setPointsToNull();
-				controller.deselect();
 			}
 		});
 		tglBtnPoint.setBackground(Color.LIGHT_GRAY);
@@ -107,7 +106,6 @@ public class DrawingFrame extends JFrame {
 		tglBtnLine.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.setPointsToNull();
-				controller.deselect();
 			}
 		});
 		tglBtnLine.setBackground(Color.LIGHT_GRAY);
@@ -123,7 +121,6 @@ public class DrawingFrame extends JFrame {
 		tglBtnRectangle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.setPointsToNull();
-				controller.deselect();
 			}
 		});
 		tglBtnRectangle.setBackground(Color.LIGHT_GRAY);
@@ -139,7 +136,6 @@ public class DrawingFrame extends JFrame {
 		tglBtnCircle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.setPointsToNull();
-				controller.deselect();
 			}
 		});
 		tglBtnCircle.setBackground(Color.LIGHT_GRAY);
@@ -155,7 +151,6 @@ public class DrawingFrame extends JFrame {
 		tglBtnDonut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.setPointsToNull();
-				controller.deselect();
 			}
 		});
 		tglBtnDonut.setBackground(Color.LIGHT_GRAY);
@@ -176,6 +171,7 @@ public class DrawingFrame extends JFrame {
 		btnColor.setForeground(Color.WHITE);
 		btnColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				controller.setPointsToNull();
 				Color temp;
 				temp = JColorChooser.showDialog(null, "Select a color", color);
 				if(temp != null) {
@@ -246,6 +242,7 @@ public class DrawingFrame extends JFrame {
 		btnInnerColor.setForeground(Color.BLACK);
 		btnInnerColor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				controller.setPointsToNull();
 				Color temp;
 				temp = JColorChooser.showDialog(null, "Chose a inner color", innerColor);
 				if(temp != null) {

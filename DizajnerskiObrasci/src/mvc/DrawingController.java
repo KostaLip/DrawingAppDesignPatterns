@@ -10,7 +10,10 @@ import java.util.Stack;
 import javax.swing.JOptionPane;
 
 import command.AddShapeCmd;
+import command.DeselectShapeCmd;
+import command.EditPointCmd;
 import command.RemoveShapeCmd;
+import command.SelectShapeCmd;
 import dialogs.DlgRectangle;
 import geometry.Circle;
 import geometry.Donut;
@@ -27,6 +30,8 @@ public class DrawingController {
 
 	DrawingModel model;
 	DrawingFrame frame;
+	
+	EditPointCmd epc;
 
 	private Point startPoint;
 	private Point endPoint;
@@ -35,12 +40,19 @@ public class DrawingController {
 
 	private String command;
 	private String drawCommand;
+	private ArrayList<Shape> selectedShapesList = new ArrayList<Shape>();
 	private ArrayList<String> tempCommands = new ArrayList<String>();
 	private ArrayList<String> commands = new ArrayList<String>();
 	private Stack<Shape> deletedShapes = new Stack<Shape>();
 	private Stack<Shape> tempShapes = new Stack<Shape>();
 	private Stack<Integer> indexs = new Stack<Integer>();
 	private Stack<Shape> tempDeletedShapes = new Stack<Shape>();
+	private Stack<Shape> selectedShapes = new Stack<Shape>();
+	private Stack<Shape> selectedShapesForDeselect = new Stack<Shape>();
+	private Stack<Shape> tempSelectedShapes = new Stack<Shape>();
+	
+	private Stack<Shape> oldStates = new Stack<Shape>();
+	private Stack<Shape> newStates = new Stack<Shape>();
 
 	public DrawingController(DrawingModel model, DrawingFrame frame) {
 		this.model = model;
@@ -81,7 +93,7 @@ public class DrawingController {
 				commands.add(command);
 				indexs.push(model.getShapes().indexOf(selectedShape));
 				model.getShapes().remove(selectedShape);
-				deselect();
+				selectedShapesList.remove(selectedShapesList.size() - 1);
 				frame.repaint();
 			}
 		}
@@ -92,18 +104,35 @@ public class DrawingController {
 		boolean go = true;
 		ArrayList<Shape> shapes = model.getShapes();
 		for (int br = shapes.size() - 1; br >= 0; br--) {
-			shapes.get(br).setSelected(false);
 			frame.repaint();
-			if (shapes.get(br).contains(x, y) && go) {
+			if (shapes.get(br).contains(x, y)) {
 				shapes.get(br).setSelected(true);
+				if (!selectedShapesList.contains(shapes.get(br))) {
+					//selectedShapesList.add(shapes.get(br));
+				}
 				selectedShape = shapes.get(br);
 				blank = true;
-				go = false;
+				frame.repaint();
 			}
 		}
-		if (!blank) {
+		if (!blank && selectedShape != null) {
+			for (int i = shapes.size() - 1; i >= 0; i--) {
+				shapes.get(i).setSelected(false);
+			}
+			for (int i = selectedShapes.size() - 1; i >= 0; i--) {
+				//commands.add("DESELECTED!" + selectedShapes.get(i));
+				//frame.commandList.append(commands.get(commands.size() - 1) + "\n");
+			}	
 			selectedShape = null;
+			selectedShapesList.clear();
 		}
+		if (blank) {
+			//commands.add("SELECTED!" + selectedShape);
+			//frame.commandList.append(commands.get(commands.size() - 1) + "\n");
+			selectedShapes.push(selectedShape);
+			selectedShapesForDeselect.push(selectedShape);
+		}
+		frame.repaint();
 	}
 
 	public void editSelectedShape() {
@@ -120,13 +149,22 @@ public class DrawingController {
 				dlgPoint.txtX.setText(Integer.toString(p.getX()));
 				dlgPoint.txtY.setText(Integer.toString(p.getY()));
 				dlgPoint.btnColor.setBackground(p.getColor());
+				String oldState = p.toString();
+				oldStates.push(p);
 				dlgPoint.setVisible(true);
 				if (dlgPoint.getPoint() != null) {
 					p.setX(dlgPoint.getPoint().getX());
 					p.setY(dlgPoint.getPoint().getY());
 					p.setColor(dlgPoint.getColor());
+					String newState = p.toString();
+					newStates.push(p);
+					Point oldPoint = (Point)oldStates.pop();
+					Point newPoint = (Point)newStates.pop();
+					epc = new EditPointCmd(oldPoint, newPoint);
+					epc.execute();
+					commands.add("EDITED!" + oldState + "?" + newState);
+					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					frame.repaint();
-					setAllFalse();
 				}
 			} else if (selectedShape instanceof Rectangle) {
 				Rectangle r = (Rectangle) selectedShape;
@@ -140,6 +178,7 @@ public class DrawingController {
 				dlgRectangle.btnColor.setBackground(r.getColor());
 				dlgRectangle.btnInnerColor.setBackground(r.getInnerColor());
 				dlgRectangle.setVisible(true);
+				String oldState = r.toString();
 				if (dlgRectangle.getRectangle() != null) {
 					Rectangle r2 = dlgRectangle.getRectangle();
 					Point p = new Point(r2.getUpperLeftPoint().getX(), r2.getUpperLeftPoint().getY());
@@ -148,8 +187,10 @@ public class DrawingController {
 					r.setHeight(r2.getHeight());
 					r.setColor(dlgRectangle.getColor());
 					r.setInnerColor(dlgRectangle.getInnerColor());
+					String newState = r.toString();
+					commands.add("EDITED!" + oldState + "?" + newState);
+					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					frame.repaint();
-					setAllFalse();
 				}
 			} else if (selectedShape instanceof Line) {
 				Line l = (Line) selectedShape;
@@ -161,6 +202,7 @@ public class DrawingController {
 				dlgLine.txtEndY.setText(Integer.toString(l.getEndPoint().getY()));
 				dlgLine.btnColor.setBackground(lineColor);
 				dlgLine.setVisible(true);
+				String oldState = l.toString();
 				if (dlgLine.getLine() != null) {
 					Line l2 = dlgLine.getLine();
 					Point startPoint = new Point(l2.getStartPoint().getX(), l2.getStartPoint().getY());
@@ -168,8 +210,10 @@ public class DrawingController {
 					l.setStartPoint(startPoint);
 					l.setEndPoint(endPoint);
 					l.setColor(dlgLine.getColor());
+					String newState = l.toString();
+					commands.add("EDITED!" + oldState + "?" + newState);
+					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					frame.repaint();
-					setAllFalse();
 				}
 			} else if (selectedShape instanceof Donut) {
 				Donut d = (Donut) selectedShape;
@@ -183,6 +227,7 @@ public class DrawingController {
 				dlgDonut.btnColor.setBackground(donutColor);
 				dlgDonut.btnInnerColor.setBackground(donutInnerColor);
 				dlgDonut.setVisible(true);
+				String oldState = d.toString();
 				if (dlgDonut.getDonut() != null) {
 					Donut d2 = dlgDonut.getDonut();
 					Point p2 = new Point(d2.getCenter().getX(), d2.getCenter().getY());
@@ -191,8 +236,10 @@ public class DrawingController {
 					d.setInnerRadius(d2.getInnerRadius());
 					d.setColor(dlgDonut.getColor());
 					d.setInnerColor(dlgDonut.getInnerColor());
+					String newState = d.toString();
+					commands.add("EDITED!" + oldState + "?" + newState);
+					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					frame.repaint();
-					setAllFalse();
 				}
 			} else if (selectedShape instanceof Circle) {
 				Circle c = (Circle) selectedShape;
@@ -205,6 +252,7 @@ public class DrawingController {
 				dlgCircle.btnColor.setBackground(circleColor);
 				dlgCircle.btnInnerColor.setBackground(circleInnerColor);
 				dlgCircle.setVisible(true);
+				String oldState = c.toString();
 				if (dlgCircle.getCircle() != null) {
 					Circle c2 = dlgCircle.getCircle();
 					Point p1 = new Point(c2.getCenter().getX(), c2.getCenter().getY());
@@ -212,8 +260,10 @@ public class DrawingController {
 					c.setRadius(c2.getRadius());
 					c.setColor(dlgCircle.getColor());
 					c.setInnerColor(dlgCircle.getInnerColor());
+					String newState = c.toString();
+					commands.add("EDITED!" + oldState + "?" + newState);
+					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					frame.repaint();
-					setAllFalse();
 				}
 			}
 		}
@@ -296,45 +346,85 @@ public class DrawingController {
 	public void undo() {
 		if (commands.size() != 0) {
 			if (readCommand().equals("Added")) {
+				System.out.println("uso sam u prvi");
+				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
-				removeCommandsFromList();
 				AddShapeCmd asc = new AddShapeCmd(model.get(model.getShapes().size() - 1), model);
 				tempShapes.push(model.get(model.getShapes().size() - 1));
 				asc.unexecute();
 				frame.repaint();
 			} else if (readCommand().equals("Deleted")) {
+				System.out.println("uso sam u drugi");
 				try {
-				tempCommands.add(commands.remove(commands.size() - 1));
-				removeCommandsFromList();
-				deletedShapes.peek().setSelected(false);
-				tempDeletedShapes.push(deletedShapes.peek());
-				RemoveShapeCmd rsc = new RemoveShapeCmd(deletedShapes.pop(), model, indexs.pop());
-				rsc.unexecute();
-				frame.repaint();
-				} catch(IndexOutOfBoundsException e) {
-					
+					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
+					tempCommands.add(commands.remove(commands.size() - 1));
+					deletedShapes.peek().setSelected(true);
+					tempDeletedShapes.push(deletedShapes.peek());
+					RemoveShapeCmd rsc = new RemoveShapeCmd(deletedShapes.pop(), model, indexs.pop());
+					rsc.unexecute();
+					frame.repaint();
+				} catch (IndexOutOfBoundsException e) {
+
 				}
-			}
+			} else if(readCommand().equals("EDITED")) {
+				System.out.println("uso sam u treci");
+				if(readEditShape().equals("Point")) {
+					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
+					tempCommands.add(commands.remove(commands.size() - 1));
+					Point oldState = (Point)oldStates.pop();
+					Point newState = (Point)newStates.pop();
+					epc.unexecute();
+					frame.repaint();
+				}
+			} 
+			/*else if (readCommand().equals("SELECTED")) {
+				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
+				tempCommands.add(commands.remove(commands.size() - 1));
+				tempSelectedShapes.push(selectedShapes.peek());
+				SelectShapeCmd ssc = new SelectShapeCmd(model, model.getShapes().indexOf(selectedShapes.pop()));
+				ssc.unexecute();
+				frame.repaint();
+			} else if (readCommand().equals("DESELECTED")) {
+				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
+				tempCommands.add(commands.remove(commands.size() - 1));
+				DeselectShapeCmd dsc = new DeselectShapeCmd(model, model.getShapes().indexOf(selectedShapesForDeselect.pop()));
+				dsc.unexecute();
+				frame.repaint();
+			}*/
 		}
 	}
 
 	public void redo() {
 		if (tempCommands.size() != 0) {
 			if (readUndoCommand().equals("Added")) {
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
-				removeCommandsFromList();
 				AddShapeCmd asc = new AddShapeCmd(tempShapes.pop(), model);
 				asc.execute();
 				frame.repaint();
 			} else if (readUndoCommand().equals("Deleted")) {
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
-				removeCommandsFromList();
 				deletedShapes.push(tempDeletedShapes.peek());
 				indexs.push(model.getShapes().indexOf(tempDeletedShapes.peek()));
 				RemoveShapeCmd rsc = new RemoveShapeCmd(tempDeletedShapes.pop(), model, 0);
 				rsc.execute();
 				frame.repaint();
-			}
+			} 
+			/*else if (readUndoCommand().equals("SELECTED")) {
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
+				commands.add(tempCommands.remove(tempCommands.size() - 1));
+				selectedShapes.push(tempSelectedShapes.peek());
+				SelectShapeCmd ssc = new SelectShapeCmd(model, model.getShapes().indexOf(tempSelectedShapes.pop()));
+				ssc.execute();
+				frame.repaint();
+			} else if (readUndoCommand().equals("DESELECT")) {
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
+				commands.add(tempCommands.remove(tempCommands.size() - 1));
+				DeselectShapeCmd dsc = new DeselectShapeCmd(model, 0);
+				dsc.execute();
+				frame.repaint();
+			}*/
 		}
 	}
 
@@ -342,6 +432,12 @@ public class DrawingController {
 		String[] parts = tempCommands.get(tempCommands.size() - 1).split("!");
 		drawCommand = parts[0];
 		return drawCommand;
+	}
+	
+	private String readEditShape() {
+		String[] parts = commands.get(commands.size() - 1).split("!");
+		String[] shapeCommand = parts[1].split("->");
+		return shapeCommand[0];
 	}
 
 	private void removeCommandsFromList() {
