@@ -11,6 +11,7 @@ import java.util.Stack;
 import javax.swing.JOptionPane;
 
 import command.AddShapeCmd;
+import command.Command;
 import command.DeselectShapeCmd;
 import command.EditCircleCmd;
 import command.EditDonutCmd;
@@ -42,16 +43,8 @@ public class DrawingController {
 	Shape selectedShape;
 
 	//UNDO I REDO ZA EDIT :)
-	private Stack<EditPointCmd> editPointCmdStack = new Stack<EditPointCmd>();
-	private Stack<EditLineCmd> editLineCmdStack = new Stack<EditLineCmd>();
-	private Stack<EditRectangleCmd> editRectangleCmdStack = new Stack<EditRectangleCmd>();
-	private Stack<EditCircleCmd> editCircleCmdStack = new Stack<EditCircleCmd>();
-	private Stack<EditDonutCmd> editDonutCmdStack = new Stack<EditDonutCmd>();
-	private Stack<EditPointCmd> tempEditPointCmdStack = new Stack<EditPointCmd>();
-	private Stack<EditLineCmd> tempEditLineCmdStack = new Stack<EditLineCmd>();
-	private Stack<EditRectangleCmd> tempEditRectangleCmdStack = new Stack<EditRectangleCmd>();
-	private Stack<EditCircleCmd> tempEditCircleCmdStack = new Stack<EditCircleCmd>();
-	private Stack<EditDonutCmd> tempEditDonutCmdStack = new Stack<EditDonutCmd>();
+	private Stack<Command> editCommands = new Stack<Command>();
+	private Stack<Command> tempEditCommands = new Stack<Command>();
 
 	private String command;
 	private String drawCommand;
@@ -107,7 +100,7 @@ public class DrawingController {
 					commands.add(command);
 					indexs.push(model.getShapes().indexOf(selectedShapesList.get(i)));
 					model.getShapes().remove(selectedShapesList.get(i));
-					// selectedShapesList.remove(selectedShapesList.size() - 1);
+					selectedShapesList.remove(selectedShapesList.size() - 1);
 				}
 				frame.repaint();
 			}
@@ -172,8 +165,8 @@ public class DrawingController {
 					newPoint.setY(dlgPoint.getPoint().getY());
 					newPoint.setColor(dlgPoint.getColor());
 					String newState = newPoint.toString();
-					editPointCmdStack.push(new EditPointCmd(p, newPoint));
-					editPointCmdStack.peek().execute();
+					editCommands.push(new EditPointCmd(p, newPoint));
+					editCommands.peek().execute();
 					commands.add("EDITED!" + oldState + "?" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					frame.repaint();
@@ -201,8 +194,8 @@ public class DrawingController {
 					newRectangle.setColor(dlgRectangle.getColor());
 					newRectangle.setInnerColor(dlgRectangle.getInnerColor());
 					String newState = newRectangle.toString();
-					editRectangleCmdStack.push(new EditRectangleCmd(r, newRectangle));
-					editRectangleCmdStack.peek().execute();
+					editCommands.push(new EditRectangleCmd(r, newRectangle));
+					editCommands.peek().execute();
 					commands.add("EDITED!" + oldState + "?" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					frame.repaint();
@@ -228,8 +221,8 @@ public class DrawingController {
 					String newState = newLine.toString();
 					commands.add("EDITED!" + oldState + "?" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
-					editLineCmdStack.push(new EditLineCmd(l, newLine));
-					editLineCmdStack.peek().execute();
+					editCommands.push(new EditLineCmd(l, newLine));
+					editCommands.peek().execute();
 					frame.repaint();
 				}
 			} else if (selectedShape instanceof Donut) {
@@ -255,8 +248,8 @@ public class DrawingController {
 					newDonut.setColor(dlgDonut.getColor());
 					newDonut.setInnerColor(dlgDonut.getInnerColor());
 					String newState = newDonut.toString();
-					editDonutCmdStack.push(new EditDonutCmd(d, newDonut));
-					editDonutCmdStack.peek().execute();
+					editCommands.push(new EditDonutCmd(d, newDonut));
+					editCommands.peek().execute();
 					commands.add("EDITED!" + oldState + "?" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					frame.repaint();
@@ -282,8 +275,8 @@ public class DrawingController {
 					newCircle.setColor(dlgCircle.getColor());
 					newCircle.setInnerColor(dlgCircle.getInnerColor());
 					String newState = newCircle.toString();
-					editCircleCmdStack.push(new EditCircleCmd(c, newCircle));
-					editCircleCmdStack.peek().execute();
+					editCommands.push(new EditCircleCmd(c, newCircle));
+					editCommands.peek().execute();
 					commands.add("EDITED!" + oldState + "?" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					frame.repaint();
@@ -456,32 +449,32 @@ public class DrawingController {
 				if (readEditShape().equals("Point")) {
 					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 					tempCommands.add(commands.remove(commands.size() - 1));
-					editPointCmdStack.peek().unexecute();
-					tempEditPointCmdStack.push(editPointCmdStack.pop());
+					editCommands.peek().unexecute();
+					tempEditCommands.push(editCommands.pop());
 					frame.repaint();
 				} else if(readEditShape().equals("Line")) {
 					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 					tempCommands.add(commands.remove(commands.size() - 1));
-					editLineCmdStack.peek().unexecute();
-					tempEditLineCmdStack.push(editLineCmdStack.pop());
+					editCommands.peek().unexecute();
+					tempEditCommands.push(editCommands.pop());
 					frame.repaint();
 				} else if(readEditShape().equals("Rectangle")) {
 					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 					tempCommands.add(commands.remove(commands.size() - 1));
-					editRectangleCmdStack.peek().unexecute();
-					tempEditRectangleCmdStack.push(editRectangleCmdStack.pop());
+					editCommands.peek().unexecute();
+					tempEditCommands.push(editCommands.pop());
 					frame.repaint();
 				} else if (readEditShape().equals("Circle")) {
 					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 					tempCommands.add(commands.remove(commands.size() - 1));
-					editCircleCmdStack.peek().unexecute();
-					tempEditCircleCmdStack.push(editCircleCmdStack.pop());
+					editCommands.peek().unexecute();
+					tempEditCommands.push(editCommands.pop());
 					frame.repaint();
 				} else if (readEditShape().equals("Donut")) {
 					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 					tempCommands.add(commands.remove(commands.size() - 1));
-					editDonutCmdStack.peek().unexecute();
-					tempEditDonutCmdStack.push(editDonutCmdStack.pop());
+					editCommands.peek().unexecute();
+					tempEditCommands.push(editCommands.pop());
 					frame.repaint();
 				}
 			}
@@ -519,35 +512,35 @@ public class DrawingController {
 				rsc.execute();
 				frame.repaint();
 			} else if (readUndoCommand().equals("EDITED")) {
-				if(readEditShape().equals("Point") && !tempEditPointCmdStack.isEmpty()) {
+				if(readEditShape().equals("Point") && !tempEditCommands.isEmpty()) {
 					frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 					commands.add(tempCommands.remove(tempCommands.size() - 1));
-					tempEditPointCmdStack.peek().execute();
-					editPointCmdStack.push(tempEditPointCmdStack.pop());
+					tempEditCommands.peek().execute();
+					editCommands.push(tempEditCommands.pop());
 					frame.repaint();
-				} else if(readEditShape().equals("Line") && !tempEditLineCmdStack.isEmpty()) {
+				} else if(readEditShape().equals("Line") && !tempEditCommands.isEmpty()) {
 					frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 					commands.add(tempCommands.remove(tempCommands.size() - 1));
-					tempEditLineCmdStack.peek().execute();
-					editLineCmdStack.push(tempEditLineCmdStack.pop());
+					tempEditCommands.peek().execute();
+					editCommands.push(tempEditCommands.pop());
 					frame.repaint();
-				} else if(readEditShape().equals("Rectangle") && !tempEditRectangleCmdStack.isEmpty()) {
+				} else if(readEditShape().equals("Rectangle") && !tempEditCommands.isEmpty()) {
 					frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 					commands.add(tempCommands.remove(tempCommands.size() - 1));
-					tempEditRectangleCmdStack.peek().execute();
-					editRectangleCmdStack.push(tempEditRectangleCmdStack.pop());
+					tempEditCommands.peek().execute();
+					editCommands.push(tempEditCommands.pop());
 					frame.repaint();
-				} else if(readEditShape().equals("Circle") && !tempEditCircleCmdStack.isEmpty()) {
+				} else if(readEditShape().equals("Circle") && !tempEditCommands.isEmpty()) {
 					frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 					commands.add(tempCommands.remove(tempCommands.size() - 1));
-					tempEditCircleCmdStack.peek().execute();
-					editCircleCmdStack.push(tempEditCircleCmdStack.pop());
+					tempEditCommands.peek().execute();
+					editCommands.push(tempEditCommands.pop());
 					frame.repaint();
-				} else if(readEditShape().equals("Donut") && !tempEditDonutCmdStack.isEmpty()) {
+				} else if(readEditShape().equals("Donut") && !tempEditCommands.isEmpty()) {
 					frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 					commands.add(tempCommands.remove(tempCommands.size() - 1));
-					tempEditDonutCmdStack.peek().execute();
-					editDonutCmdStack.push(tempEditDonutCmdStack.pop());
+					tempEditCommands.peek().execute();
+					editCommands.push(tempEditCommands.pop());
 					frame.repaint();
 				}
 			}
