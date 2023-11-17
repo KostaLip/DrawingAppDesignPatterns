@@ -93,7 +93,7 @@ public class DrawingController {
 				commands.add(command);
 				indexs.push(model.getShapes().indexOf(selectedShape));
 				model.getShapes().remove(selectedShape);
-				selectedShapesList.remove(selectedShapesList.size() - 1);
+				//selectedShapesList.remove(selectedShapesList.size() - 1);
 				frame.repaint();
 			}
 		}
