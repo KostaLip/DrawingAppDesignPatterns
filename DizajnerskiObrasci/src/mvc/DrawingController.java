@@ -346,7 +346,6 @@ public class DrawingController {
 	public void undo() {
 		if (commands.size() != 0) {
 			if (readCommand().equals("Added")) {
-				System.out.println("uso sam u prvi");
 				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
 				AddShapeCmd asc = new AddShapeCmd(model.get(model.getShapes().size() - 1), model);
@@ -354,7 +353,6 @@ public class DrawingController {
 				asc.unexecute();
 				frame.repaint();
 			} else if (readCommand().equals("Deleted")) {
-				System.out.println("uso sam u drugi");
 				try {
 					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 					tempCommands.add(commands.remove(commands.size() - 1));
@@ -367,7 +365,6 @@ public class DrawingController {
 
 				}
 			} else if(readCommand().equals("EDITED")) {
-				System.out.println("uso sam u treci");
 				if(readEditShape().equals("Point")) {
 					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 					tempCommands.add(commands.remove(commands.size() - 1));
