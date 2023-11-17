@@ -60,6 +60,10 @@ public class DrawingFrame extends JFrame {
 	private final JPanel pnlOptions = new JPanel();
 	private final JButton btnUndo = new JButton("UNDO");
 	private final JButton btnRedo = new JButton("REDO");
+	private final JButton btnToBack = new JButton("TO BACK");
+	private final JButton btnBringToBack = new JButton("BRING TO BACK");
+	private final JButton btnToFront = new JButton("TO FRONT");
+	private final JButton btnBringToFront = new JButton("BRING TO FRONT");
 	
 	public DrawingFrame() {
 		view.setBorder(new LineBorder(new Color(0, 0, 0), 1));
@@ -276,6 +280,22 @@ public class DrawingFrame extends JFrame {
 				controller.undo();
 			}
 		});
+		btnBringToBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.bringToBack();
+			}
+		});
+		btnBringToBack.setBackground(Color.GRAY);
+		
+		pnlOptions.add(btnBringToBack);
+		btnToBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.toBack();
+			}
+		});
+		btnToBack.setBackground(Color.GRAY);
+		
+		pnlOptions.add(btnToBack);
 		pnlOptions.add(btnUndo);
 		
 		//BTN REDO
@@ -287,6 +307,22 @@ public class DrawingFrame extends JFrame {
 			}
 		});
 		pnlOptions.add(btnRedo);
+		btnToFront.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				controller.toFront();
+			}
+		});
+		btnToFront.setBackground(Color.GRAY);
+		
+		pnlOptions.add(btnToFront);
+		btnBringToFront.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.bringToFront();
+			}
+		});
+		btnBringToFront.setBackground(Color.GRAY);
+		
+		pnlOptions.add(btnBringToFront);
 	}
 	
 	public DrawingView getView() {

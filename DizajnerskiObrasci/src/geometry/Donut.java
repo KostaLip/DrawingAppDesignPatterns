@@ -1,7 +1,13 @@
 package geometry;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Ellipse2D.Double;
 
 public class Donut extends Circle {
 	private int innerRadius;
@@ -54,16 +60,35 @@ public class Donut extends Circle {
 	}
 
 	public void draw(Graphics g) {
-		g.setColor(super.getColor());
-		super.draw(g);
-		g.drawOval(getCenter().getX() - innerRadius, getCenter().getY() - innerRadius, 2 * innerRadius,
+		Graphics2D g2d = (Graphics2D) g.create();
+		
+		g2d.setComposite(AlphaComposite.SrcOver.derive(1.0f));
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		Ellipse2D outerCircle = new Ellipse2D.Double(getCenter().getX() - radius, getCenter().getY() - radius, 2 * radius, 2 * radius);
+		Ellipse2D innerCircle = new Ellipse2D.Double(getCenter().getX() - innerRadius, getCenter().getY() - innerRadius, 2 * innerRadius,
 				2 * innerRadius);
-		g.setColor(Color.WHITE);
-		g.fillOval(getCenter().getX() - innerRadius, getCenter().getY() - innerRadius, 2 * innerRadius,
+		
+		Area outerArea = new Area(outerCircle);
+        Area innerArea = new Area(innerCircle);
+        
+        outerArea.subtract(innerArea);
+        
+        g2d.setColor(getColor());
+        g2d.drawOval(getCenter().getX() - radius, getCenter().getY() - radius, 2 * radius, 2 * radius);
+        g2d.drawOval(getCenter().getX() - innerRadius, getCenter().getY() - innerRadius, 2 * innerRadius,
 				2 * innerRadius);
+        g2d.setColor(getInnerColor());
+        g2d.fill(outerArea);
+
+        g2d.dispose();
 
 		if (isSelected()) {
 			g.setColor(Color.BLUE);
+			g.drawRect(getCenter().getX() - getRadius() - 2, getCenter().getY() - 2, 4, 4);
+			g.drawRect(getCenter().getX() + getRadius() - 2, getCenter().getY() - 2, 4, 4);
+			g.drawRect(getCenter().getX() - 2, getCenter().getY() - getRadius() - 2, 4, 4);
+			g.drawRect(getCenter().getX() - 2, getCenter().getY() + getRadius() - 2, 4, 4);
 			g.drawRect(getCenter().getX() - 2, getCenter().getY() - 2, 4, 4);
 			g.drawRect(getCenter().getX() - innerRadius - 2, getCenter().getY() - 2, 4, 4);
 			g.drawRect(getCenter().getX() + innerRadius - 2, getCenter().getY() - 2, 4, 4);

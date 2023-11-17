@@ -1,12 +1,13 @@
 package command;
 
+import geometry.Point;
 import geometry.Rectangle;
 
 public class EditRectangleCmd implements Command {
 
 	private Rectangle rectangle;
 	private Rectangle newState;
-	private Rectangle original = new Rectangle();
+	private Rectangle original = new Rectangle(new Point(), 0, 0);
 	
 	public EditRectangleCmd(Rectangle rectangle, Rectangle newState) {
 		this.rectangle = rectangle;

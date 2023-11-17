@@ -1,12 +1,14 @@
 package command;
 
+import geometry.Point;
+
 import geometry.Line;
 
 public class EditLineCmd implements Command {
 
 	private Line line;
 	private Line newState;
-	private Line original = new Line();
+	private Line original = new Line(new Point(), new Point());
 	
 	public EditLineCmd(Line line, Line newState) {
 		this.line = line;
