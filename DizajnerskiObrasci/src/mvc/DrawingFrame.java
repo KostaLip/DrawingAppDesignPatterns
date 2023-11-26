@@ -64,6 +64,7 @@ public class DrawingFrame extends JFrame {
 	private final JButton btnBringToBack = new JButton("BRING TO BACK");
 	private final JButton btnToFront = new JButton("TO FRONT");
 	private final JButton btnBringToFront = new JButton("BRING TO FRONT");
+	public final JToggleButton tglBtnHexagon = new JToggleButton("Hexagon");
 	
 	public DrawingFrame() {
 		view.setBorder(new LineBorder(new Color(0, 0, 0), 1));
@@ -73,9 +74,9 @@ public class DrawingFrame extends JFrame {
 		pnlBtns.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
 		pnlBtns.setBackground(SystemColor.inactiveCaption);
 		GridBagLayout gbl_pnlBtns = new GridBagLayout();
-		gbl_pnlBtns.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_pnlBtns.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		gbl_pnlBtns.rowHeights = new int[] { 0, 0, 0, 0 };
-		gbl_pnlBtns.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+		gbl_pnlBtns.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 				Double.MIN_VALUE };
 		gbl_pnlBtns.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		pnlBtns.setLayout(gbl_pnlBtns);
@@ -168,7 +169,7 @@ public class DrawingFrame extends JFrame {
 		//BTN COLOR
 		GridBagConstraints gbc_btnColor = new GridBagConstraints();
 		gbc_btnColor.insets = new Insets(0, 0, 5, 0);
-		gbc_btnColor.gridx = 16;
+		gbc_btnColor.gridx = 17;
 		gbc_btnColor.gridy = 0;
 		btnColor.setPreferredSize(new Dimension(100, 50));
 		btnColor.setBackground(color);
@@ -184,6 +185,15 @@ public class DrawingFrame extends JFrame {
 				}
 			}
 		});
+		
+		buttonGroup.add(tglBtnHexagon);
+		GridBagConstraints gbc_tglBtnHexagon = new GridBagConstraints();
+		gbc_tglBtnHexagon.insets = new Insets(0, 0, 5, 5);
+		gbc_tglBtnHexagon.gridx = 16;
+		gbc_tglBtnHexagon.gridy = 0;
+		tglBtnHexagon.setBackground(Color.LIGHT_GRAY);
+		tglBtnHexagon.setPreferredSize(new Dimension(100, 50));
+		pnlBtns.add(tglBtnHexagon, gbc_tglBtnHexagon);
 		pnlBtns.add(btnColor, gbc_btnColor);
 		
 		//LABELA OPTIONS
@@ -239,7 +249,7 @@ public class DrawingFrame extends JFrame {
 		//BTN INNERCOLOR
 		GridBagConstraints gbc_btnInnerColor = new GridBagConstraints();
 		gbc_btnInnerColor.insets = new Insets(0, 0, 5, 0);
-		gbc_btnInnerColor.gridx = 16;
+		gbc_btnInnerColor.gridx = 17;
 		gbc_btnInnerColor.gridy = 1;
 		btnInnerColor.setPreferredSize(new Dimension(120, 30));
 		btnInnerColor.setBackground(innerColor);

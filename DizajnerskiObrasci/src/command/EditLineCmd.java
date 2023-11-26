@@ -6,8 +6,8 @@ import geometry.Line;
 
 public class EditLineCmd implements Command {
 
-	private Line line;
-	private Line newState;
+	private Line line = new Line(new Point(), new Point());
+	private Line newState =  new Line(new Point(), new Point());
 	private Line original = new Line(new Point(), new Point());
 	
 	public EditLineCmd(Line line, Line newState) {
@@ -17,26 +17,13 @@ public class EditLineCmd implements Command {
 	
 	@Override
 	public void execute() {
-		original.getStartPoint().setX(line.getStartPoint().getX());
-		original.getStartPoint().setY(line.getStartPoint().getY());
-		original.getEndPoint().setX(line.getEndPoint().getX());
-		original.getEndPoint().setY(line.getEndPoint().getY());
-		original.setColor(line.getColor());
-		
-		line.getStartPoint().setX(newState.getStartPoint().getX());
-		line.getStartPoint().setY(newState.getStartPoint().getY());
-		line.getEndPoint().setX(newState.getEndPoint().getX());
-		line.getEndPoint().setY(newState.getEndPoint().getY());
-		line.setColor(newState.getColor());
+		original = line.clone();
+		line= newState.clone();
 	}
 
 	@Override
 	public void unexecute() {
-		line.getStartPoint().setX(original.getStartPoint().getX());
-		line.getStartPoint().setY(original.getStartPoint().getY());
-		line.getEndPoint().setX(original.getEndPoint().getX());
-		line.getEndPoint().setY(original.getEndPoint().getY());
-		line.setColor(original.getColor());
+		line = original.clone();
 	}
 
 }

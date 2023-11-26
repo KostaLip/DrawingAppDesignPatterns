@@ -93,6 +93,18 @@ public class Line extends Shape {
 	public void setEndPoint(Point endPoint) {
 		this.endPoint = endPoint;
 	}
+	
+	public Line clone() {
+		Line line = new Line(new Point(), new Point());
+		
+		line.getStartPoint().setX(this.getStartPoint().getX());
+		line.getStartPoint().setY(this.getStartPoint().getY());
+		line.getEndPoint().setX(this.getEndPoint().getX());
+		line.getEndPoint().setY(this.getEndPoint().getY());
+		line.setColor(this.getColor());
+		
+		return line;
+	}
 
 	public String toString() {
 		return "Line->StartPoint:X=" + startPoint.getX() + ",Y=" + startPoint.getY() + ";"

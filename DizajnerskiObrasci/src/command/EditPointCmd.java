@@ -33,20 +33,13 @@ public class EditPointCmd implements Command {
 	
 	@Override
 	public void execute() {
-		original.setX(point.getX());
-		original.setY(point.getY());
-		original.setColor(point.getColor());
-		
-		point.setX(newState.getX());
-		point.setY(newState.getY());
-		point.setColor(newState.getColor());
+		original = point.clone();
+		point = newState.clone();
 	}
 
 	@Override
 	public void unexecute() {
-		point.setX(original.getX());
-		point.setY(original.getY());
-		point.setColor(original.getColor());
+		point = original.clone();
 	}
 
 }

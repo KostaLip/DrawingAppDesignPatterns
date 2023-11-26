@@ -10,11 +10,13 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
+import adapter.HexagonAdapter;
 import command.AddShapeCmd;
 import command.Command;
 import command.DeselectShapeCmd;
 import command.EditCircleCmd;
 import command.EditDonutCmd;
+import command.EditHexagonCmd;
 import command.EditLineCmd;
 import command.EditPointCmd;
 import command.EditRectangleCmd;
@@ -27,9 +29,11 @@ import geometry.Line;
 import geometry.Point;
 import geometry.Rectangle;
 import geometry.Shape;
+import hexagon.Hexagon;
 import dialogs.DlgLine;
 import dialogs.DlgPoint;
 import dialogs.DlgDonut;
+import dialogs.DlgHexagon;
 import dialogs.DlgCircle;
 
 public class DrawingController {
@@ -114,17 +118,21 @@ public class DrawingController {
 		for (int br = shapes.size() - 1; br >= 0; br--) {
 			frame.repaint();
 			if (shapes.get(br).contains(x, y) && go) {
-				shapes.get(br).setSelected(true);
 				if (!selectedShapesList.contains(shapes.get(br))) {
+					shapes.get(br).setSelected(true);
 					selectedShapesList.add(shapes.get(br));
 					selectedShape = shapes.get(br);
+					blank = true;
+				} else {
+					shapes.get(br).setSelected(false);
+					selectedShapesList.remove(shapes.get(br));
+					frame.commandList.append("DESELECTED!" + selectedShape + "\n");
 				}
-				blank = true;
 				go = false;
 				frame.repaint();
 			}
 		}
-		if (!blank && selectedShape != null) {
+		/*if (!blank && selectedShape != null) {
 			for (int i = shapes.size() - 1; i >= 0; i--) {
 				shapes.get(i).setSelected(false);
 			}
@@ -133,7 +141,7 @@ public class DrawingController {
 				frame.commandList.append("DESELECTED!" + selectedShapesList.get(i) + "\n");
 			}
 			selectedShapesList.clear();
-		}
+		}*/
 		if (blank) {
 			// commands.add("SELECTED!" + selectedShape);
 			frame.commandList.append("SELECTED!" + selectedShape + "\n");
@@ -281,6 +289,33 @@ public class DrawingController {
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					frame.repaint();
 				}
+			} else if (selectedShape instanceof HexagonAdapter) {
+				HexagonAdapter hexagon = (HexagonAdapter) selectedShape;
+				HexagonAdapter newHexagon = new HexagonAdapter(new Hexagon(0, 0, 0));
+				Color hexagonColor = hexagon.getColor();
+				Color hexagonInnerColor = hexagon.getInnerColor();
+				DlgHexagon dlgHexagon = new DlgHexagon(hexagonColor, hexagonInnerColor);
+				dlgHexagon.txtCenterX.setText(Integer.toString(hexagon.getCenterX()));
+				dlgHexagon.txtCenterY.setText(Integer.toString(hexagon.getCenterY()));
+				dlgHexagon.txtRadius.setText(Integer.toString(hexagon.getRadius()));
+				dlgHexagon.btnColor.setBackground(hexagonColor);
+				dlgHexagon.btnInnerColor.setBackground(hexagonInnerColor);
+				dlgHexagon.setVisible(true);
+				String oldState = hexagon.toString();
+				if(dlgHexagon.getHexagon() != null) {
+					HexagonAdapter hexagon2 = dlgHexagon.getHexagon();
+					newHexagon.setCenterX(hexagon2.getCenterX());
+					newHexagon.setCenterY(hexagon2.getCenterY());
+					newHexagon.setRadius(hexagon2.getRadius());
+					newHexagon.setColor(hexagon2.getColor());
+					newHexagon.setInnerColor(hexagon2.getInnerColor());
+					String newState = newHexagon.toString();
+					editCommands.push(new EditHexagonCmd(hexagon, newHexagon));
+					editCommands.peek().execute();
+					commands.add("EDITED!" + oldState + "?" + newState);
+					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
+					frame.repaint();
+				}
 			}
 		}
 
@@ -355,6 +390,19 @@ public class DrawingController {
 				} else if (frame.tglBtnSelect.isSelected()) {
 					setPointsToNull();
 					select(e.getX(), e.getY());
+				} else if (frame.tglBtnHexagon.isSelected()) {
+					setPointsToNull();
+					DlgHexagon dlgHexagon = new DlgHexagon(frame.color, frame.innerColor);
+					dlgHexagon.txtCenterX.setText(Integer.toString(e.getX()));
+					dlgHexagon.txtCenterY.setText(Integer.toString(e.getY()));
+					dlgHexagon.setVisible(true);
+					if (dlgHexagon.getHexagon() != null) {
+						command = "Added!" + dlgHexagon.getHexagon() + "\n";
+						frame.commandList.append(command);
+						commands.add(command);
+						model.add(dlgHexagon.getHexagon());
+						frame.repaint();
+					}
 				}
 			}
 		};
@@ -476,6 +524,12 @@ public class DrawingController {
 					editCommands.peek().unexecute();
 					tempEditCommands.push(editCommands.pop());
 					frame.repaint();
+				} else if (readEditShape().equals("Hexagon")) {
+					frame.commandList.append("UNDO" + commands.get(commands.size() - 1) + "\n");
+					tempCommands.add(commands.remove(commands.size() - 1));
+					editCommands.peek().unexecute();
+					tempEditCommands.push(editCommands.pop());
+					frame.repaint();
 				}
 			}
 			/*
@@ -537,6 +591,12 @@ public class DrawingController {
 					editCommands.push(tempEditCommands.pop());
 					frame.repaint();
 				} else if(readEditShape().equals("Donut") && !tempEditCommands.isEmpty()) {
+					frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
+					commands.add(tempCommands.remove(tempCommands.size() - 1));
+					tempEditCommands.peek().execute();
+					editCommands.push(tempEditCommands.pop());
+					frame.repaint();
+				} else if (readEditShape().equals("Hexagon") && !tempEditCommands.isEmpty()) {
 					frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 					commands.add(tempCommands.remove(tempCommands.size() - 1));
 					tempEditCommands.peek().execute();
