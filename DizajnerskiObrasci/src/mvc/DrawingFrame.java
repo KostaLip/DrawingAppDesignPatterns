@@ -297,7 +297,7 @@ public class DrawingFrame extends JFrame {
 		btnBringToBack.setEnabled(false);
 		btnBringToBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.bringToBack();
+				controller.bringToBack(false);
 			}
 		});
 		btnBringToBack.setBackground(Color.GRAY);
@@ -306,7 +306,7 @@ public class DrawingFrame extends JFrame {
 		btnToBack.setEnabled(false);
 		btnToBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.toBack();
+				controller.toBack(false);
 			}
 		});
 		btnToBack.setBackground(Color.GRAY);
@@ -327,7 +327,7 @@ public class DrawingFrame extends JFrame {
 		btnToFront.setEnabled(false);
 		btnToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				controller.toFront();
+				controller.toFront(false);
 			}
 		});
 		btnToFront.setBackground(Color.GRAY);
@@ -336,7 +336,7 @@ public class DrawingFrame extends JFrame {
 		btnBringToFront.setEnabled(false);
 		btnBringToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.bringToFront();
+				controller.bringToFront(false);
 			}
 		});
 		btnBringToFront.setBackground(Color.GRAY);
