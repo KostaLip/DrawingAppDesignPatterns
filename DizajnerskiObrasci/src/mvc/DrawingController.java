@@ -30,6 +30,8 @@ import geometry.Point;
 import geometry.Rectangle;
 import geometry.Shape;
 import hexagon.Hexagon;
+import observer.ButtonEnable;
+import observer.ButtonEnableUpdate;
 import dialogs.DlgLine;
 import dialogs.DlgPoint;
 import dialogs.DlgDonut;
@@ -37,6 +39,9 @@ import dialogs.DlgHexagon;
 import dialogs.DlgCircle;
 
 public class DrawingController {
+	
+	private ButtonEnable btnEnable;
+	private ButtonEnableUpdate btnEnableUpdate;
 
 	DrawingModel model;
 	DrawingFrame frame;
@@ -67,6 +72,9 @@ public class DrawingController {
 	public DrawingController(DrawingModel model, DrawingFrame frame) {
 		this.model = model;
 		this.frame = frame;
+		this.btnEnable = new ButtonEnable();
+		this.btnEnableUpdate = new ButtonEnableUpdate(this.frame);
+		btnEnable.addListener(btnEnableUpdate);
 	}
 
 	public void setPointsToNull() {
@@ -108,6 +116,11 @@ public class DrawingController {
 				}
 				frame.repaint();
 			}
+			tempCommands.clear();
+			btnEnable.addShapeInList(model.getShapes().size());
+			btnEnable.addShapeInSelectedList(selectedShapesList.size());
+			btnEnable.addRedoList(tempCommands.size());
+			btnEnable.addUndoList(commands.size());
 		}
 	}
 
@@ -123,10 +136,20 @@ public class DrawingController {
 					selectedShapesList.add(shapes.get(br));
 					selectedShape = shapes.get(br);
 					blank = true;
+					tempCommands.clear();
+					btnEnable.addShapeInList(model.getShapes().size());
+					btnEnable.addShapeInSelectedList(selectedShapesList.size());
+					btnEnable.addRedoList(tempCommands.size());
+					btnEnable.addUndoList(commands.size());
 				} else {
 					shapes.get(br).setSelected(false);
 					selectedShapesList.remove(shapes.get(br));
 					frame.commandList.append("DESELECTED!" + selectedShape + "\n");
+					tempCommands.clear();
+					btnEnable.addShapeInList(model.getShapes().size());
+					btnEnable.addShapeInSelectedList(selectedShapesList.size());
+					btnEnable.addRedoList(tempCommands.size());
+					btnEnable.addUndoList(commands.size());
 				}
 				go = false;
 				frame.repaint();
@@ -177,6 +200,11 @@ public class DrawingController {
 					editCommands.peek().execute();
 					commands.add("EDITED!" + oldState + "?" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
+					tempCommands.clear();
+					btnEnable.addShapeInList(model.getShapes().size());
+					btnEnable.addShapeInSelectedList(selectedShapesList.size());
+					btnEnable.addRedoList(tempCommands.size());
+					btnEnable.addUndoList(commands.size());
 					frame.repaint();
 				}
 			} else if (selectedShape instanceof Rectangle) {
@@ -206,6 +234,11 @@ public class DrawingController {
 					editCommands.peek().execute();
 					commands.add("EDITED!" + oldState + "?" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
+					tempCommands.clear();
+					btnEnable.addShapeInList(model.getShapes().size());
+					btnEnable.addShapeInSelectedList(selectedShapesList.size());
+					btnEnable.addRedoList(tempCommands.size());
+					btnEnable.addUndoList(commands.size());
 					frame.repaint();
 				}
 			} else if (selectedShape instanceof Line) {
@@ -231,6 +264,11 @@ public class DrawingController {
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					editCommands.push(new EditLineCmd(l, newLine));
 					editCommands.peek().execute();
+					tempCommands.clear();
+					btnEnable.addShapeInList(model.getShapes().size());
+					btnEnable.addShapeInSelectedList(selectedShapesList.size());
+					btnEnable.addRedoList(tempCommands.size());
+					btnEnable.addUndoList(commands.size());
 					frame.repaint();
 				}
 			} else if (selectedShape instanceof Donut) {
@@ -260,6 +298,11 @@ public class DrawingController {
 					editCommands.peek().execute();
 					commands.add("EDITED!" + oldState + "?" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
+					tempCommands.clear();
+					btnEnable.addShapeInList(model.getShapes().size());
+					btnEnable.addShapeInSelectedList(selectedShapesList.size());
+					btnEnable.addRedoList(tempCommands.size());
+					btnEnable.addUndoList(commands.size());
 					frame.repaint();
 				}
 			} else if (selectedShape instanceof Circle) {
@@ -287,6 +330,11 @@ public class DrawingController {
 					editCommands.peek().execute();
 					commands.add("EDITED!" + oldState + "?" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
+					tempCommands.clear();
+					btnEnable.addShapeInList(model.getShapes().size());
+					btnEnable.addShapeInSelectedList(selectedShapesList.size());
+					btnEnable.addRedoList(tempCommands.size());
+					btnEnable.addUndoList(commands.size());
 					frame.repaint();
 				}
 			} else if (selectedShape instanceof HexagonAdapter) {
@@ -314,6 +362,11 @@ public class DrawingController {
 					editCommands.peek().execute();
 					commands.add("EDITED!" + oldState + "?" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
+					tempCommands.clear();
+					btnEnable.addShapeInList(model.getShapes().size());
+					btnEnable.addShapeInSelectedList(selectedShapesList.size());
+					btnEnable.addRedoList(tempCommands.size());
+					btnEnable.addUndoList(commands.size());
 					frame.repaint();
 				}
 			}
@@ -332,6 +385,11 @@ public class DrawingController {
 					command = "Added!" + clickPoint + "\n";
 					frame.commandList.append(command);
 					commands.add(command);
+					tempCommands.clear();
+					btnEnable.addShapeInList(model.getShapes().size());
+					btnEnable.addShapeInSelectedList(selectedShapesList.size());
+					btnEnable.addRedoList(tempCommands.size());
+					btnEnable.addUndoList(commands.size());
 					frame.repaint();
 				} else if (frame.tglBtnLine.isSelected()) {
 					if (startPoint == null && endPoint == null) {
@@ -346,6 +404,11 @@ public class DrawingController {
 						model.add(line);
 						startPoint = null;
 						endPoint = null;
+						tempCommands.clear();
+						btnEnable.addShapeInList(model.getShapes().size());
+						btnEnable.addShapeInSelectedList(selectedShapesList.size());
+						btnEnable.addRedoList(tempCommands.size());
+						btnEnable.addUndoList(commands.size());
 						frame.repaint();
 					}
 				} else if (frame.tglBtnRectangle.isSelected()) {
@@ -359,6 +422,11 @@ public class DrawingController {
 						frame.commandList.append(command);
 						commands.add(command);
 						model.add(dlgRectangle.getRectangle());
+						tempCommands.clear();
+						btnEnable.addShapeInList(model.getShapes().size());
+						btnEnable.addShapeInSelectedList(selectedShapesList.size());
+						btnEnable.addRedoList(tempCommands.size());
+						btnEnable.addUndoList(commands.size());
 						frame.repaint();
 					}
 				} else if (frame.tglBtnCircle.isSelected()) {
@@ -372,6 +440,11 @@ public class DrawingController {
 						frame.commandList.append(command);
 						commands.add(command);
 						model.add(dlgCircle.getCircle());
+						tempCommands.clear();
+						btnEnable.addShapeInList(model.getShapes().size());
+						btnEnable.addShapeInSelectedList(selectedShapesList.size());
+						btnEnable.addRedoList(tempCommands.size());
+						btnEnable.addUndoList(commands.size());
 						frame.repaint();
 					}
 				} else if (frame.tglBtnDonut.isSelected()) {
@@ -385,6 +458,11 @@ public class DrawingController {
 						frame.commandList.append(command);
 						commands.add(command);
 						model.add(dlgDonut.getDonut());
+						tempCommands.clear();
+						btnEnable.addShapeInList(model.getShapes().size());
+						btnEnable.addShapeInSelectedList(selectedShapesList.size());
+						btnEnable.addRedoList(tempCommands.size());
+						btnEnable.addUndoList(commands.size());
 						frame.repaint();
 					}
 				} else if (frame.tglBtnSelect.isSelected()) {
@@ -401,6 +479,11 @@ public class DrawingController {
 						frame.commandList.append(command);
 						commands.add(command);
 						model.add(dlgHexagon.getHexagon());
+						tempCommands.clear();
+						btnEnable.addShapeInList(model.getShapes().size());
+						btnEnable.addShapeInSelectedList(selectedShapesList.size());
+						btnEnable.addRedoList(tempCommands.size());
+						btnEnable.addUndoList(commands.size());
 						frame.repaint();
 					}
 				}
@@ -416,6 +499,8 @@ public class DrawingController {
 						model.getShapes().indexOf(selectedShape) + 1);
 				frame.repaint();
 			}
+			btnEnable.addRedoList(tempCommands.size());
+			btnEnable.addUndoList(commands.size());
 		}
 	}
 
@@ -427,6 +512,8 @@ public class DrawingController {
 						model.getShapes().indexOf(selectedShape) - 1);
 				frame.repaint();
 			}
+			btnEnable.addRedoList(tempCommands.size());
+			btnEnable.addUndoList(commands.size());
 		}
 	}
 
@@ -448,6 +535,8 @@ public class DrawingController {
 				frame.repaint();
 				tempList.clear();
 			}
+			btnEnable.addRedoList(tempCommands.size());
+			btnEnable.addUndoList(commands.size());
 		}
 	}
 
@@ -469,6 +558,8 @@ public class DrawingController {
 				frame.repaint();
 				tempList.clear();
 			}
+			btnEnable.addRedoList(tempCommands.size());
+			btnEnable.addUndoList(commands.size());
 		}
 	}
 
@@ -532,6 +623,8 @@ public class DrawingController {
 					frame.repaint();
 				}
 			}
+			btnEnable.addRedoList(tempCommands.size());
+			btnEnable.addUndoList(commands.size());
 			/*
 			 * else if (readCommand().equals("SELECTED")) { frame.commandList.append("UNDO!"
 			 * + commands.get(commands.size() - 1) + "\n");
@@ -604,6 +697,8 @@ public class DrawingController {
 					frame.repaint();
 				}
 			}
+			btnEnable.addRedoList(tempCommands.size());
+			btnEnable.addUndoList(commands.size());
 			/*
 			 * else if (readUndoCommand().equals("SELECTED")) {
 			 * frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1)

@@ -57,13 +57,13 @@ public class DrawingFrame extends JFrame {
 	private final JPanel pnlCommandList = new JPanel();
 	public JTextArea commandList = new JTextArea(40,25);
 	private JScrollPane scrollList = new JScrollPane(commandList);
-	private final JPanel pnlOptions = new JPanel();
-	private final JButton btnUndo = new JButton("UNDO");
-	private final JButton btnRedo = new JButton("REDO");
-	private final JButton btnToBack = new JButton("TO BACK");
-	private final JButton btnBringToBack = new JButton("BRING TO BACK");
-	private final JButton btnToFront = new JButton("TO FRONT");
-	private final JButton btnBringToFront = new JButton("BRING TO FRONT");
+	private JPanel pnlOptions = new JPanel();
+	public JButton btnUndo = new JButton("UNDO");
+	public JButton btnRedo = new JButton("REDO");
+	public JButton btnToBack = new JButton("TO BACK");
+	public JButton btnBringToBack = new JButton("BRING TO BACK");
+	public JButton btnToFront = new JButton("TO FRONT");
+	public JButton btnBringToFront = new JButton("BRING TO FRONT");
 	public final JToggleButton tglBtnHexagon = new JToggleButton("Hexagon");
 	
 	public DrawingFrame() {
@@ -215,6 +215,7 @@ public class DrawingFrame extends JFrame {
 		gbc_tglBtnSelect.gridy = 1;
 		pnlBtns.add(tglBtnSelect, gbc_tglBtnSelect);
 		tglBtnSelect.setPreferredSize(new Dimension(110, 30));
+		tglBtnSelect.setEnabled(false);
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.deleteSelectedShape();
@@ -230,6 +231,7 @@ public class DrawingFrame extends JFrame {
 		gbc_tglBtnDelete.gridy = 1;
 		pnlBtns.add(btnDelete, gbc_tglBtnDelete);
 		btnDelete.setPreferredSize(new Dimension(110, 30));
+		btnDelete.setEnabled(false);
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.editSelectedShape();
@@ -245,6 +247,7 @@ public class DrawingFrame extends JFrame {
 		gbc_tglBtnEdit.gridy = 1;
 		pnlBtns.add(btnEdit, gbc_tglBtnEdit);
 		btnEdit.setPreferredSize(new Dimension(110, 30));
+		btnEdit.setEnabled(false);
 		
 		//BTN INNERCOLOR
 		GridBagConstraints gbc_btnInnerColor = new GridBagConstraints();
@@ -285,11 +288,13 @@ public class DrawingFrame extends JFrame {
 		//BTN UNDO
 		btnUndo.setBackground(Color.GRAY);
 		btnUndo.setPreferredSize(new Dimension(110, 30));
+		btnUndo.setEnabled(false);
 		btnUndo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				controller.undo();
 			}
 		});
+		btnBringToBack.setEnabled(false);
 		btnBringToBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.bringToBack();
@@ -298,6 +303,7 @@ public class DrawingFrame extends JFrame {
 		btnBringToBack.setBackground(Color.GRAY);
 		
 		pnlOptions.add(btnBringToBack);
+		btnToBack.setEnabled(false);
 		btnToBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.toBack();
@@ -311,12 +317,14 @@ public class DrawingFrame extends JFrame {
 		//BTN REDO
 		btnRedo.setBackground(Color.GRAY);
 		btnRedo.setPreferredSize(new Dimension(110,30));
+		btnRedo.setEnabled(false);
 		btnRedo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.redo();
 			}
 		});
 		pnlOptions.add(btnRedo);
+		btnToFront.setEnabled(false);
 		btnToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				controller.toFront();
@@ -325,6 +333,7 @@ public class DrawingFrame extends JFrame {
 		btnToFront.setBackground(Color.GRAY);
 		
 		pnlOptions.add(btnToFront);
+		btnBringToFront.setEnabled(false);
 		btnBringToFront.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.bringToFront();
