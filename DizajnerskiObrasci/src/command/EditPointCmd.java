@@ -33,13 +33,13 @@ public class EditPointCmd implements Command {
 	
 	@Override
 	public void execute() {
-		original = point.clone();
-		point = newState.clone();
+		original = point.clone(original);
+		point = newState.clone(point);
 	}
 
 	@Override
 	public void unexecute() {
-		point = original.clone();
+		point = original.clone(point);
 	}
 
 }

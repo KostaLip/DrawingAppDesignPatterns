@@ -72,7 +72,8 @@ public class DrawingController {
 	private Stack<Shape> tempShapes = new Stack<Shape>();
 	private Stack<Integer> indexs = new Stack<Integer>();
 	private Stack<Shape> tempDeletedShapes = new Stack<Shape>();
-
+	
+	private ArrayList<Shape> deselectedShapesList = new ArrayList<Shape>();
 	private ArrayList<Shape> selectedShapesList = new ArrayList<Shape>();
 
 	private Stack<Shape> oldStates = new Stack<Shape>();
@@ -151,9 +152,12 @@ public class DrawingController {
 					btnEnable.addRedoList(tempCommands.size());
 					btnEnable.addUndoList(commands.size());
 				} else {
-					shapes.get(br).setSelected(false);
+					Shape deselectedShape = shapes.get(br);
+					deselectedShape.setSelected(false);
+					deselectedShapesList.add(deselectedShape);
+					frame.commandList.append("DESELECTED!" + deselectedShape + "\n");
+					commands.add("DESELECTED!" + deselectedShape);
 					selectedShapesList.remove(shapes.get(br));
-					frame.commandList.append("DESELECTED!" + selectedShape + "\n");
 					tempCommands.clear();
 					btnEnable.addShapeInList(model.getShapes().size());
 					btnEnable.addShapeInSelectedList(selectedShapesList.size());
@@ -172,7 +176,7 @@ public class DrawingController {
 		 * selectedShapesList.get(i) + "\n"); } selectedShapesList.clear(); }
 		 */
 		if (blank) {
-			// commands.add("SELECTED!" + selectedShape);
+			commands.add("SELECTED!" + selectedShape);
 			frame.commandList.append("SELECTED!" + selectedShape + "\n");
 		}
 		frame.repaint();
@@ -580,10 +584,21 @@ public class DrawingController {
 			}
 		} else {
 			Shape selectedShape = selectedShapesList.get(0);
-			Collections.swap(model.getShapes(), model.getShapes().indexOf(selectedShape), model.getShapes().size() - 1);
-			frame.repaint();
-			btnEnable.addRedoList(tempCommands.size());
-			btnEnable.addUndoList(commands.size());
+			if (model.getShapes().size() >= 2) {
+				ArrayList<Shape> tempList = new ArrayList<Shape>();
+				tempList.addAll(model.getShapes());
+				int index = model.getShapes().indexOf(selectedShape);
+				model.getShapes().clear();
+				for (int i = 0; i <= tempList.size() - 1; i++) {
+					if (i == index) {
+						continue;
+					}
+					model.getShapes().add(tempList.get(i));
+				}
+				model.getShapes().add(tempList.get(index));
+				btnEnable.addRedoList(tempCommands.size());
+				btnEnable.addUndoList(commands.size());
+			}
 		}
 	}
 
@@ -614,10 +629,21 @@ public class DrawingController {
 			}
 		} else {
 			Shape selectedShape = selectedShapesList.get(0);
-			Collections.swap(model.getShapes(), model.getShapes().indexOf(selectedShape), 0);
-			frame.repaint();
-			btnEnable.addRedoList(tempCommands.size());
-			btnEnable.addUndoList(commands.size());
+			if (model.getShapes().size() >= 2) {
+				ArrayList<Shape> tempList = new ArrayList<Shape>();
+				tempList.addAll(model.getShapes());
+				int index = model.getShapes().indexOf(selectedShape);
+				model.getShapes().clear();
+				model.getShapes().add(tempList.get(index));
+				for (int i = 0; i <= tempList.size() - 1; i++) {
+					if (i == index) {
+						continue;
+					}
+					model.getShapes().add(tempList.get(i));
+				}
+				btnEnable.addRedoList(tempCommands.size());
+				btnEnable.addUndoList(commands.size());
+			}
 		}
 	}
 
@@ -635,6 +661,7 @@ public class DrawingController {
 					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1));
 					tempCommands.add(commands.remove(commands.size() - 1));
 					deletedShapes.peek().setSelected(true);
+					selectedShapesList.add(deletedShapes.peek());
 					tempDeletedShapes.push(deletedShapes.peek());
 					RemoveShapeCmd rsc = new RemoveShapeCmd(deletedShapes.pop(), model, indexs.pop());
 					rsc.unexecute();
@@ -652,12 +679,12 @@ public class DrawingController {
 				tempCommands.add(commands.remove(commands.size() - 1));
 				tbc.unexecute();
 				frame.repaint();
-			} else if(readCommand().equals("BringToFront")) {
+			} else if (readCommand().equals("BringToFront")) {
 				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1));
 				tempCommands.add(commands.remove(commands.size() - 1));
 				btfc.unexecute();
 				frame.repaint();
-			} else if(readCommand().equals("BringToBack")) {
+			} else if (readCommand().equals("BringToBack")) {
 				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1));
 				tempCommands.add(commands.remove(commands.size() - 1));
 				btbc.unexecute();
@@ -700,7 +727,23 @@ public class DrawingController {
 					tempEditCommands.push(editCommands.pop());
 					frame.repaint();
 				}
+			} else if(readCommand().equals("SELECTED")) {
+				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
+				tempCommands.add(commands.remove(commands.size() - 1));
+				deselectedShapesList.add(selectedShapesList.remove(selectedShapesList.size() - 1));
+				SelectShapeCmd ssc = new SelectShapeCmd(model, model.getShapes().indexOf(deselectedShapesList.get(deselectedShapesList.size() - 1)));
+				ssc.unexecute();
+				frame.repaint();
+			} else if(readCommand().equals("DESELECTED")) {
+				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
+				tempCommands.add(commands.remove(commands.size() - 1));
+				selectedShapesList.add(deselectedShapesList.remove(deselectedShapesList.size() - 1));
+				DeselectShapeCmd dsc = new DeselectShapeCmd(model, model.getShapes().indexOf(selectedShapesList.get(selectedShapesList.size() - 1)));
+				dsc.unexecute();
+				frame.repaint();
 			}
+			btnEnable.addShapeInList(model.getShapes().size());
+			btnEnable.addShapeInSelectedList(selectedShapesList.size());
 			btnEnable.addRedoList(tempCommands.size());
 			btnEnable.addUndoList(commands.size());
 			/*
@@ -746,12 +789,12 @@ public class DrawingController {
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				tbc.execute();
 				frame.repaint();
-			} else if(readUndoCommand().equals("BringToFront")) {
+			} else if (readUndoCommand().equals("BringToFront")) {
 				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1));
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				btfc.execute();
 				frame.repaint();
-			} else if(readUndoCommand().equals("BringToBack")) {
+			} else if (readUndoCommand().equals("BringToBack")) {
 				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1));
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				btbc.execute();
@@ -794,7 +837,23 @@ public class DrawingController {
 					editCommands.push(tempEditCommands.pop());
 					frame.repaint();
 				}
+			} else if(readUndoCommand().equals("SELECTED")) {
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
+				commands.add(tempCommands.remove(tempCommands.size() - 1));
+				selectedShapesList.add(deselectedShapesList.remove(deselectedShapesList.size() - 1));
+				SelectShapeCmd ssc = new SelectShapeCmd(model, selectedShapesList.indexOf(selectedShapesList.get(selectedShapesList.size() - 1)));
+				ssc.execute();
+				frame.repaint();
+			} else if(readUndoCommand().equals("DESELECTED")) {
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
+				commands.add(tempCommands.remove(tempCommands.size() - 1));
+				deselectedShapesList.add(selectedShapesList.remove(0));
+				DeselectShapeCmd dsc = new DeselectShapeCmd(model, deselectedShapesList.indexOf(deselectedShapesList.get(0)));
+				dsc.execute();
+				frame.repaint();
 			}
+			btnEnable.addShapeInList(model.getShapes().size());
+			btnEnable.addShapeInSelectedList(selectedShapesList.size());
 			btnEnable.addRedoList(tempCommands.size());
 			btnEnable.addUndoList(commands.size());
 			/*

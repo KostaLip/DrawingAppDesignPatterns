@@ -94,8 +94,7 @@ public class Point extends Shape {
 		this.y = y;
 	}
 	
-	public Point clone() {
-		Point point = new Point();
+	public Point clone(Point point) {
 		
 		point.setX(this.getX());
 		point.setY(this.getY());

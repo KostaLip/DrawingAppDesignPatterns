@@ -54,6 +54,18 @@ public class HexagonAdapter extends Shape {
 		this.hexagon.setR(r);
 	}
 	
+	public HexagonAdapter clone(HexagonAdapter hexagon) {
+		
+		hexagon.setCenterX(this.getCenterX());
+		hexagon.setCenterY(this.getCenterY());
+		hexagon.setColor(this.getColor());
+		hexagon.setInnerColor(this.getInnerColor());
+		hexagon.setRadius(this.getRadius());
+		
+		return hexagon;
+		
+	}
+	
 	public String toString() {
 		return "Hexagon->Center:" + "X=" + getCenterX() + ",Y=" + getCenterY() + ",radius=" + getRadius()
 				+ " Color:" + getColor() + ",InnerColor:" + getInnerColor();

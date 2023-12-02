@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Rectangle extends Shape {
-	private Point upperLeftPoint;
+	private Point upperLeftPoint = new Point(); 
 	private int width;
 	private int height;
 	private Color innerColor = Color.WHITE;
@@ -117,6 +117,19 @@ public class Rectangle extends Shape {
 
 	public Point getUpperLeftPoint() {
 		return upperLeftPoint;
+	}
+	
+	public Rectangle clone(Rectangle rectangle) {
+		
+		rectangle.getUpperLeftPoint().setX(this.getUpperLeftPoint().getX());
+		rectangle.getUpperLeftPoint().setY(this.getUpperLeftPoint().getY());
+		rectangle.setHeight(this.getHeight());
+		rectangle.setWidth(this.getWidth());
+		rectangle.setColor(this.getColor());
+		rectangle.setInnerColor(this.getInnerColor());
+		
+		return rectangle;
+		
 	}
 
 	public String toString() {

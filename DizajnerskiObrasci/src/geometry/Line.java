@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Line extends Shape {
-	private Point startPoint;
-	private Point endPoint;
+	private Point startPoint = new Point();
+	private Point endPoint = new Point();
 
 	public Line() {
 
@@ -94,8 +94,7 @@ public class Line extends Shape {
 		this.endPoint = endPoint;
 	}
 	
-	public Line clone() {
-		Line line = new Line(new Point(), new Point());
+	public Line clone(Line line) {
 		
 		line.getStartPoint().setX(this.getStartPoint().getX());
 		line.getStartPoint().setY(this.getStartPoint().getY());

@@ -17,13 +17,13 @@ public class EditLineCmd implements Command {
 	
 	@Override
 	public void execute() {
-		original = line.clone();
-		line= newState.clone();
+		original = line.clone(original);
+		line= newState.clone(line);
 	}
 
 	@Override
 	public void unexecute() {
-		line = original.clone();
+		line = original.clone(line);
 	}
 
 }

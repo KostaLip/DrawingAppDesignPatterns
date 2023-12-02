@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Circle extends Shape {
-	private Point center;
+	private Point center = new Point();
 	protected int radius;
 
 	public Circle() {
@@ -99,6 +99,18 @@ public class Circle extends Shape {
 
 	public void setRadius(int radius) {
 		this.radius = radius;
+	}
+	
+	public Circle clone(Circle circle) {
+		
+		circle.getCenter().setX(this.getCenter().getX());
+		circle.getCenter().setY(this.getCenter().getY());
+		circle.setRadius(this.getRadius());
+		circle.setColor(this.getColor());
+		circle.setInnerColor(this.getInnerColor());
+		
+		return circle;
+		
 	}
 
 	public String toString() {

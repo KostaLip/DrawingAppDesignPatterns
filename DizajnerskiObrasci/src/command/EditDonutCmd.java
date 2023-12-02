@@ -16,29 +16,13 @@ public class EditDonutCmd implements Command {
 	
 	@Override
 	public void execute() {
-		original.getCenter().setX(donut.getCenter().getX());
-		original.getCenter().setY(donut.getCenter().getY());
-		original.setRadius(donut.getRadius());
-		original.setInnerRadius(donut.getInnerRadius());
-		original.setColor(donut.getColor());
-		original.setInnerColor(donut.getInnerColor());
-		
-		donut.getCenter().setX(newState.getCenter().getX());
-		donut.getCenter().setY(newState.getCenter().getY());
-		donut.setRadius(newState.getRadius());
-		donut.setInnerRadius(newState.getInnerRadius());
-		donut.setColor(newState.getColor());
-		donut.setInnerColor(newState.getInnerColor());
+		original = donut.clone(original);
+		donut = newState.clone(donut);
 	}
 
 	@Override
 	public void unexecute() {
-		donut.getCenter().setX(original.getCenter().getX());
-		donut.getCenter().setY(original.getCenter().getY());
-		donut.setRadius(original.getRadius());
-		donut.setInnerRadius(original.getInnerRadius());
-		donut.setColor(original.getColor());
-		donut.setInnerColor(original.getInnerColor());
+		donut = original.clone(donut);
 	}
 
 }

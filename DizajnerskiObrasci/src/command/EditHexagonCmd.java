@@ -16,26 +16,13 @@ public class EditHexagonCmd implements Command {
 
 	@Override
 	public void execute() {
-		original.setCenterX(hexagon.getCenterX());
-		original.setCenterY(hexagon.getCenterY());
-		original.setRadius(hexagon.getRadius());
-		original.setColor(hexagon.getColor());
-		original.setInnerColor(hexagon.getInnerColor());
-		
-		hexagon.setCenterX(newState.getCenterX());
-		hexagon.setCenterY(newState.getCenterY());
-		hexagon.setRadius(newState.getRadius());
-		hexagon.setColor(newState.getColor());
-		hexagon.setInnerColor(newState.getInnerColor());
+		original = hexagon.clone(original);
+		hexagon = newState.clone(hexagon);
 	}
 
 	@Override
 	public void unexecute() {
-		hexagon.setCenterX(original.getCenterX());
-		hexagon.setCenterY(original.getCenterY());
-		hexagon.setRadius(original.getRadius());
-		hexagon.setColor(original.getColor());
-		hexagon.setInnerColor(original.getInnerColor());
+		hexagon = original.clone(hexagon);
 
 	}
 
