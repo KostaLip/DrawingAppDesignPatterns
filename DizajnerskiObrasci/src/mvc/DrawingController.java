@@ -6,6 +6,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 import javax.swing.JOptionPane;
@@ -75,6 +77,7 @@ public class DrawingController {
 	
 	private ArrayList<Shape> deselectedShapesList = new ArrayList<Shape>();
 	private ArrayList<Shape> selectedShapesList = new ArrayList<Shape>();
+	private Map<Shape, Integer> indexOfSelected = new HashMap<Shape, Integer>();
 
 	private Stack<Shape> oldStates = new Stack<Shape>();
 	private Stack<Shape> newStates = new Stack<Shape>();
@@ -145,6 +148,7 @@ public class DrawingController {
 					shapes.get(br).setSelected(true);
 					selectedShapesList.add(shapes.get(br));
 					selectedShape = shapes.get(br);
+					indexOfSelected.put(selectedShape, selectedShapesList.indexOf(selectedShape));
 					blank = true;
 					tempCommands.clear();
 					btnEnable.addShapeInList(model.getShapes().size());
@@ -841,14 +845,14 @@ public class DrawingController {
 				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				selectedShapesList.add(deselectedShapesList.remove(deselectedShapesList.size() - 1));
-				SelectShapeCmd ssc = new SelectShapeCmd(model, selectedShapesList.indexOf(selectedShapesList.get(selectedShapesList.size() - 1)));
+				SelectShapeCmd ssc = new SelectShapeCmd(model, model.getShapes().indexOf(selectedShapesList.get(selectedShapesList.size() - 1)));
 				ssc.execute();
 				frame.repaint();
 			} else if(readUndoCommand().equals("DESELECTED")) {
 				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
-				deselectedShapesList.add(selectedShapesList.remove(0));
-				DeselectShapeCmd dsc = new DeselectShapeCmd(model, deselectedShapesList.indexOf(deselectedShapesList.get(0)));
+				deselectedShapesList.add(selectedShapesList.remove(selectedShapesList.size() - 1));
+				DeselectShapeCmd dsc = new DeselectShapeCmd(model, model.getShapes().indexOf(deselectedShapesList.get(deselectedShapesList.size() - 1)));
 				dsc.execute();
 				frame.repaint();
 			}
