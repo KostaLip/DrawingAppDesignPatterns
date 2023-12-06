@@ -1,5 +1,8 @@
 package command;
 
+import java.util.ArrayList;
+
+import geometry.Shape;
 import mvc.DrawingModel;
 
 public class SelectShapeCmd implements Command {

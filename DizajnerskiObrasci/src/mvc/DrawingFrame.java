@@ -30,6 +30,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
 import javax.swing.border.BevelBorder;
@@ -65,9 +68,21 @@ public class DrawingFrame extends JFrame {
 	public JButton btnToFront = new JButton("TO FRONT");
 	public JButton btnBringToFront = new JButton("BRING TO FRONT");
 	public final JToggleButton tglBtnHexagon = new JToggleButton("Hexagon");
+	private JMenuBar menuBar = new JMenuBar();
+	private JMenu fileMenu = new JMenu("FILE");
+	private JMenuItem loadFromTxt = new JMenuItem("Load From TXT");
+	private JMenuItem loadFromBin = new JMenuItem("Load From BIN");
+	private JMenuItem saveFile = new JMenuItem("Save As");
 	
 	public DrawingFrame() {
 		view.setBorder(new LineBorder(new Color(0, 0, 0), 1));
+		
+		//MENU
+		fileMenu.add(saveFile);
+		fileMenu.add(loadFromBin);
+		fileMenu.add(loadFromTxt);
+		menuBar.add(fileMenu);
+		this.setJMenuBar(menuBar);
 		
 		//PNL BTNS
 		view.setBackground(Color.WHITE);
@@ -342,6 +357,26 @@ public class DrawingFrame extends JFrame {
 		btnBringToFront.setBackground(Color.GRAY);
 		
 		pnlOptions.add(btnBringToFront);
+		
+		saveFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.saveFile();
+			}
+		});
+		
+		loadFromBin.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		
+		loadFromTxt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 	}
 	
 	public DrawingView getView() {

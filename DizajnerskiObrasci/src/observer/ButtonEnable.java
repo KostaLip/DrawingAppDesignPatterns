@@ -10,6 +10,7 @@ public class ButtonEnable {
 	private int selectedShapeListSize = 0;
 	private int redoListSize = 0;
 	private int undoListSize = 0;
+	private int position = 0;
 	
 	public ButtonEnable() {
 		this.propertyChangeSupport = new PropertyChangeSupport(this);

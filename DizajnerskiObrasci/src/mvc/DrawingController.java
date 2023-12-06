@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import adapter.HexagonAdapter;
@@ -77,7 +78,7 @@ public class DrawingController {
 	
 	private ArrayList<Shape> deselectedShapesList = new ArrayList<Shape>();
 	private ArrayList<Shape> selectedShapesList = new ArrayList<Shape>();
-	private Map<Shape, Integer> indexOfSelected = new HashMap<Shape, Integer>();
+	private Map<String, Integer> indexOfSelected = new HashMap<String, Integer>();
 
 	private Stack<Shape> oldStates = new Stack<Shape>();
 	private Stack<Shape> newStates = new Stack<Shape>();
@@ -86,7 +87,7 @@ public class DrawingController {
 		this.model = model;
 		this.frame = frame;
 		this.btnEnable = new ButtonEnable();
-		this.btnEnableUpdate = new ButtonEnableUpdate(this.frame);
+		this.btnEnableUpdate = new ButtonEnableUpdate(this.frame, this.model);
 		btnEnable.addListener(btnEnableUpdate);
 	}
 
@@ -147,8 +148,8 @@ public class DrawingController {
 				if (!selectedShapesList.contains(shapes.get(br))) {
 					shapes.get(br).setSelected(true);
 					selectedShapesList.add(shapes.get(br));
+					indexOfSelected.put(shapes.get(br).toString(), selectedShapesList.indexOf(shapes.get(br)));
 					selectedShape = shapes.get(br);
-					indexOfSelected.put(selectedShape, selectedShapesList.indexOf(selectedShape));
 					blank = true;
 					tempCommands.clear();
 					btnEnable.addShapeInList(model.getShapes().size());
@@ -161,7 +162,8 @@ public class DrawingController {
 					deselectedShapesList.add(deselectedShape);
 					frame.commandList.append("DESELECTED!" + deselectedShape + "\n");
 					commands.add("DESELECTED!" + deselectedShape);
-					selectedShapesList.remove(shapes.get(br));
+					selectedShapesList.remove(deselectedShape);
+					frame.repaint();
 					tempCommands.clear();
 					btnEnable.addShapeInList(model.getShapes().size());
 					btnEnable.addShapeInSelectedList(selectedShapesList.size());
@@ -507,7 +509,7 @@ public class DrawingController {
 
 	public void toFront(boolean undoOrRedo) {
 		if (!undoOrRedo) {
-			if (selectedShapesList.size() == 1) {
+			if (selectedShapesList.size() == 1 && model.getShapes().indexOf(selectedShapesList.get(0)) != model.getShapes().size() - 1) {
 				Shape selectedShape = selectedShapesList.get(0);
 				if (model.getShapes().indexOf(selectedShape) != model.getShapes().size() - 1) {
 					Collections.swap(model.getShapes(), model.getShapes().indexOf(selectedShape),
@@ -534,7 +536,7 @@ public class DrawingController {
 
 	public void toBack(boolean undoOrRedo) {
 		if (!undoOrRedo) {
-			if (selectedShapesList.size() == 1) {
+			if (selectedShapesList.size() == 1 && model.getShapes().indexOf(selectedShapesList.get(0)) != 0) {
 				Shape selectedShape = selectedShapesList.get(0);
 				if (model.getShapes().indexOf(selectedShape) != 0) {
 					Collections.swap(model.getShapes(), model.getShapes().indexOf(selectedShape),
@@ -563,7 +565,7 @@ public class DrawingController {
 
 	public void bringToFront(boolean undoOrRedo) {
 		if (!undoOrRedo) {
-			if (selectedShapesList.size() == 1) {
+			if (selectedShapesList.size() == 1 && model.getShapes().indexOf(selectedShapesList.get(0)) != model.getShapes().size() - 1) {
 				Shape selectedShape = selectedShapesList.get(0);
 				if (model.getShapes().size() >= 2) {
 					ArrayList<Shape> tempList = new ArrayList<Shape>();
@@ -608,7 +610,7 @@ public class DrawingController {
 
 	public void bringToBack(boolean undoOrRedo) {
 		if (!undoOrRedo) {
-			if (selectedShapesList.size() == 1) {
+			if (selectedShapesList.size() == 1 && model.getShapes().indexOf(selectedShapesList.get(0)) != 0) {
 				Shape selectedShape = selectedShapesList.get(0);
 				if (model.getShapes().size() >= 2) {
 					ArrayList<Shape> tempList = new ArrayList<Shape>();
@@ -873,6 +875,13 @@ public class DrawingController {
 			 * dsc = new DeselectShapeCmd(model, 0); dsc.execute(); frame.repaint(); }
 			 */
 		}
+	}
+	
+	public void saveFile() {
+		System.out.println("uso sam");
+		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home")+"/Desktop");
+		fileChooser.setDialogTitle("Save as");
+		fileChooser.setVisible(true);
 	}
 
 	private String readUndoCommand() {

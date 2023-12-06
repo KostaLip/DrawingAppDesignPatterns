@@ -4,6 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import mvc.DrawingFrame;
+import mvc.DrawingModel;
 
 public class ButtonEnableUpdate implements PropertyChangeListener {
 
@@ -11,10 +12,13 @@ public class ButtonEnableUpdate implements PropertyChangeListener {
 	private int selectedShapeListSize = 0;
 	private int redoListSize = 0;
 	private int undoListSize = 0;
+	private int position = 0;
 	private DrawingFrame frame;
+	private DrawingModel model;
 	
-	public ButtonEnableUpdate(DrawingFrame frame) {
+	public ButtonEnableUpdate(DrawingFrame frame, DrawingModel model) {
 		this.frame = frame;
+		this.model = model;
 	}
 	
 	@Override
@@ -44,7 +48,6 @@ public class ButtonEnableUpdate implements PropertyChangeListener {
 			checkBtnRedo();
 			checkBtnUndo();
 		}
-		
 	}
 	
 	private void checkBtnUndo() {
