@@ -8,22 +8,24 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import geometry.Shape;
+import mvc.DrawingController;
 import mvc.DrawingModel;
 
 public class LoadSaveBin implements LoadSaveStrategy {
 
 	DrawingModel model;
+	DrawingController controller;
 	
-	public void SaveToBin(DrawingModel model) {
+	public LoadSaveBin(DrawingModel model, DrawingController controller) {
 		this.model = model;
+		this.controller = controller;
 	}
 
 	@Override
 	public void saveF(String path) {
-		try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(path))) {
+		try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(path))){
             ArrayList<Shape> shapes = model.getShapes();
             outputStream.writeObject(shapes);
-            System.out.println("Crtez je uspešno sačuvan u datoteku kao binarni fajl.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -36,10 +38,11 @@ public class LoadSaveBin implements LoadSaveStrategy {
 			ArrayList<Shape> shapes = (ArrayList<Shape>) inputStream.readObject();
 	        model.getShapes().clear();
 	        for (Shape shape : shapes) {
-	        	System.out.println(shape);
+	        	if(shape.isSelected()) {
+	        		controller.selectedShapesList.add(shape);
+	        	}
 	            model.getShapes().add(shape);
 	        }
-	        System.out.println("Ucitano iz binarnog fajla: " + path);
 	    } catch (IOException | ClassNotFoundException e) {
 	        e.printStackTrace();
 	    }

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.color.CMMException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Stack;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import adapter.HexagonAdapter;
 import command.AddShapeCmd;
@@ -39,6 +41,8 @@ import geometry.Shape;
 import hexagon.Hexagon;
 import observer.ButtonEnable;
 import observer.ButtonEnableUpdate;
+import strategy.LoadSaveBin;
+import strategy.LoadSaveTxt;
 import dialogs.DlgLine;
 import dialogs.DlgPoint;
 import dialogs.DlgDonut;
@@ -77,7 +81,7 @@ public class DrawingController {
 	private Stack<Shape> tempDeletedShapes = new Stack<Shape>();
 	
 	private ArrayList<Shape> deselectedShapesList = new ArrayList<Shape>();
-	private ArrayList<Shape> selectedShapesList = new ArrayList<Shape>();
+	public ArrayList<Shape> selectedShapesList = new ArrayList<Shape>();
 	private Map<String, Integer> indexOfSelected = new HashMap<String, Integer>();
 
 	private Stack<Shape> oldStates = new Stack<Shape>();
@@ -878,10 +882,40 @@ public class DrawingController {
 	}
 	
 	public void saveFile() {
-		System.out.println("uso sam");
-		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home")+"/Desktop");
+		JFileChooser fileChooser = new JFileChooser();
+		int userSelection = fileChooser.showSaveDialog(frame);
 		fileChooser.setDialogTitle("Save as");
 		fileChooser.setVisible(true);
+		if(userSelection == JFileChooser.APPROVE_OPTION) {
+			File file = fileChooser.getSelectedFile();
+			String path = file.getAbsolutePath();
+			LoadSaveBin lsb = new LoadSaveBin(model, this);
+			lsb.saveF(path + ".bin");
+			LoadSaveTxt lst = new LoadSaveTxt(frame);
+			lst.saveF(path + ".txt");
+		}
+	}
+	
+	public void loadBinFile() {
+		JFileChooser fileChooser = new JFileChooser();
+	    fileChooser.setDialogTitle("Open");
+	    fileChooser.setVisible(true);
+
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Binary Files", "bin");
+	    fileChooser.setFileFilter(filter);
+
+	    int userSelection = fileChooser.showOpenDialog(frame);
+	    if (userSelection == JFileChooser.APPROVE_OPTION) {
+	        File file = fileChooser.getSelectedFile();
+	        String filePath = file.getAbsolutePath();
+	        LoadSaveBin lsb = new LoadSaveBin(model, this);
+	        lsb.load(filePath);
+	        frame.repaint();
+	        btnEnable.addShapeInList(model.getShapes().size());
+			btnEnable.addShapeInSelectedList(selectedShapesList.size());
+			btnEnable.addRedoList(tempCommands.size());
+			btnEnable.addUndoList(commands.size());
+	    }
 	}
 
 	private String readUndoCommand() {

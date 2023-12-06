@@ -367,7 +367,7 @@ public class DrawingFrame extends JFrame {
 		loadFromBin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				controller.loadBinFile();
 			}
 		});
 		
