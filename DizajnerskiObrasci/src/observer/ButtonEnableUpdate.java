@@ -15,75 +15,77 @@ public class ButtonEnableUpdate implements PropertyChangeListener {
 	private int position = 0;
 	private DrawingFrame frame;
 	private DrawingModel model;
-	
+
 	public ButtonEnableUpdate(DrawingFrame frame, DrawingModel model) {
 		this.frame = frame;
 		this.model = model;
 	}
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if(evt.getPropertyName().equals("addShape")) {
-			this.shapeListSize = (int)evt.getNewValue();
+		if (evt.getPropertyName().equals("addShape")) {
+			this.shapeListSize = (int) evt.getNewValue();
 			checkBtnEnable();
 			checkBtnSelectedEnable();
 			checkBtnRedo();
 			checkBtnUndo();
-		} else if(evt.getPropertyName().equals("selectedShape")) {
-			this.selectedShapeListSize = (int)evt.getNewValue();
+		} else if (evt.getPropertyName().equals("selectedShape")) {
+			this.selectedShapeListSize = (int) evt.getNewValue();
 			checkBtnEnable();
 			checkBtnSelectedEnable();
 			checkBtnRedo();
 			checkBtnUndo();
-		} else if(evt.getPropertyName().equals("redo")) {
-			this.redoListSize = (int)evt.getNewValue();
+		} else if (evt.getPropertyName().equals("redo")) {
+			this.redoListSize = (int) evt.getNewValue();
 			checkBtnEnable();
 			checkBtnSelectedEnable();
 			checkBtnRedo();
 			checkBtnUndo();
-		} else if(evt.getPropertyName().equals("undo") ) {
-			this.undoListSize = (int)evt.getNewValue();
+		} else if (evt.getPropertyName().equals("undo")) {
+			this.undoListSize = (int) evt.getNewValue();
 			checkBtnEnable();
 			checkBtnSelectedEnable();
 			checkBtnRedo();
 			checkBtnUndo();
 		}
 	}
-	
+
 	private void checkBtnUndo() {
-		if(undoListSize == 0) {
+		if (undoListSize == 0) {
 			frame.btnUndo.setEnabled(false);
-		} else if(undoListSize > 0) {
+		} else if (undoListSize > 0) {
 			frame.btnUndo.setEnabled(true);
 		}
 	}
-	
+
 	private void checkBtnRedo() {
-		if(redoListSize == 0) {
+		if (redoListSize == 0) {
 			frame.btnRedo.setEnabled(false);
-		} else if(redoListSize > 0) {
+		} else if (redoListSize > 0) {
 			frame.btnRedo.setEnabled(true);
 		}
 	}
-	
+
 	private void checkBtnSelectedEnable() {
-		if(selectedShapeListSize == 0) {
+		if (selectedShapeListSize == 0) {
 			frame.btnDelete.setEnabled(false);
 			frame.btnEdit.setEnabled(false);
 			frame.btnBringToBack.setEnabled(false);
 			frame.btnBringToFront.setEnabled(false);
 			frame.btnToBack.setEnabled(false);
 			frame.btnToFront.setEnabled(false);
-		} else if(selectedShapeListSize == 1) {
+		} else if (selectedShapeListSize == 1) {
 			frame.btnDelete.setEnabled(true);
 			frame.btnEdit.setEnabled(true);
-			frame.btnBringToBack.setEnabled(true);
-			frame.btnBringToFront.setEnabled(true);
 			frame.btnUndo.setEnabled(true);
 			frame.btnRedo.setEnabled(true);
-			frame.btnToBack.setEnabled(true);
-			frame.btnToFront.setEnabled(true);
-		} else if(selectedShapeListSize > 1) {
+			if(shapeListSize > 1) {
+				frame.btnToBack.setEnabled(true);
+				frame.btnToFront.setEnabled(true);
+				frame.btnBringToBack.setEnabled(true);
+				frame.btnBringToFront.setEnabled(true);
+			}
+		} else if (selectedShapeListSize > 1) {
 			frame.btnDelete.setEnabled(true);
 			frame.btnEdit.setEnabled(false);
 			frame.btnBringToBack.setEnabled(false);
@@ -94,9 +96,9 @@ public class ButtonEnableUpdate implements PropertyChangeListener {
 			frame.btnToFront.setEnabled(false);
 		}
 	}
-	
+
 	private void checkBtnEnable() {
-		if(shapeListSize == 0) {
+		if (shapeListSize == 0) {
 			frame.btnDelete.setEnabled(false);
 			frame.btnEdit.setEnabled(false);
 			frame.tglBtnSelect.setEnabled(false);
@@ -111,12 +113,14 @@ public class ButtonEnableUpdate implements PropertyChangeListener {
 			frame.btnDelete.setEnabled(true);
 			frame.btnEdit.setEnabled(true);
 			frame.tglBtnSelect.setEnabled(true);
-			frame.btnBringToBack.setEnabled(true);
-			frame.btnBringToFront.setEnabled(true);
 			frame.btnUndo.setEnabled(true);
 			frame.btnRedo.setEnabled(true);
-			frame.btnToBack.setEnabled(true);
-			frame.btnToFront.setEnabled(true);
+			if (shapeListSize > 1) {
+				frame.btnToBack.setEnabled(true);
+				frame.btnToFront.setEnabled(true);
+				frame.btnBringToBack.setEnabled(true);
+				frame.btnBringToFront.setEnabled(true);
+			}
 		}
 	}
 

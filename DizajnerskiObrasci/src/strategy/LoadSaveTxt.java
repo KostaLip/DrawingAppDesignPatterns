@@ -4,14 +4,17 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import mvc.DrawingController;
 import mvc.DrawingFrame;
 
 public class LoadSaveTxt implements LoadSaveStrategy {
 
 	private DrawingFrame frame;
+	private DrawingController controller;
 	
-	public LoadSaveTxt(DrawingFrame frame) {
+	public LoadSaveTxt(DrawingFrame frame, DrawingController controller) {
 		this.frame = frame;
+		this.controller = controller;
 	}
 	
 	@Override
@@ -26,8 +29,7 @@ public class LoadSaveTxt implements LoadSaveStrategy {
 
 	@Override
 	public void load(String path) {
-		// TODO Auto-generated method stub
-		
+		controller.loadTxt();
 	}
 
 }

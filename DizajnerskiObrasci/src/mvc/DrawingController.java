@@ -4,13 +4,19 @@ import java.awt.Color;
 import java.awt.color.CMMException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.print.attribute.standard.Media;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -51,6 +57,7 @@ import dialogs.DlgCircle;
 
 public class DrawingController {
 
+	private static final Object[] String = null;
 	private ButtonEnable btnEnable;
 	private ButtonEnableUpdate btnEnableUpdate;
 
@@ -891,7 +898,7 @@ public class DrawingController {
 			String path = file.getAbsolutePath();
 			LoadSaveBin lsb = new LoadSaveBin(model, this);
 			lsb.saveF(path + ".bin");
-			LoadSaveTxt lst = new LoadSaveTxt(frame);
+			LoadSaveTxt lst = new LoadSaveTxt(frame, this);
 			lst.saveF(path + ".txt");
 		}
 	}
@@ -916,6 +923,141 @@ public class DrawingController {
 			btnEnable.addRedoList(tempCommands.size());
 			btnEnable.addUndoList(commands.size());
 	    }
+	}
+	
+	public void loadTxt() {
+		
+	}
+	
+	public void loadTxtFile() {
+		model.getShapes().clear();
+		frame.repaint();
+		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home")+"/Desktop");
+	    fileChooser.setDialogTitle("Open");
+	    fileChooser.setVisible(true);
+
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Text files", "txt");
+	    fileChooser.setFileFilter(filter);
+	    int userSelection = fileChooser.showOpenDialog(frame);
+	    if (userSelection == JFileChooser.APPROVE_OPTION) {
+	        File file = fileChooser.getSelectedFile();
+	        String filePath = file.getAbsolutePath();
+			LoadSaveTxt lst = new LoadSaveTxt(frame, this);
+			String[]string2 = null;
+	        try {
+	            BufferedReader reader = new BufferedReader(new FileReader(file));
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	            	int option = JOptionPane.showConfirmDialog(null, "DO YOU WANT TO DELETE SELECTED SHAPES");
+	    			if (option == JOptionPane.YES_OPTION) {
+	    				String command = readTxtCommand(line);
+	    				if(command.equals("Added")) {
+	    					String shape = readTxtShape(line);
+	    					if(shape.equals("Point")) {
+	    						String[] newPoint = readPoint(line);
+	    						int x = Integer.parseInt(newPoint[0]);
+	    						int y = Integer.parseInt(newPoint[1]);
+	    						int r = Integer.parseInt(newPoint[2]);
+	    						int g = Integer.parseInt(newPoint[3]);
+	    						int b = Integer.parseInt(newPoint[4]);
+	    						Shape point = new Point(x, y);
+	    						point.setColor(new Color(r, g, b));
+	    						model.add(point);
+	    						frame.repaint();
+	    						System.out.println(shape + " x=" + x + " y=" + y + " r=" + r + 
+	    								" g=" + g + " b=" + b);
+	    					} else if(shape.equals("Line")) {
+	    						String[] newLine = readLine(line);
+	    						int startX = Integer.parseInt(newLine[0]);
+	    						int startY = Integer.parseInt(newLine[1]);
+	    						int endX = Integer.parseInt(newLine[2]);
+	    						int endY = Integer.parseInt(newLine[3]);
+	    						int r = Integer.parseInt(newLine[4]);
+	    						int g = Integer.parseInt(newLine[5]);
+	    						int b = Integer.parseInt(newLine[6]);
+	    						Point startPoint = new Point(startX, startY);
+	    						Point endPoint = new Point(endX, endY);
+	    						Shape nLine = new Line(startPoint, endPoint);
+	    						nLine.setColor(new Color(r, g, b));
+	    						model.add(nLine);
+	    						frame.repaint();
+	    						
+	    					}
+	    				} else if(command.equals("Deleted")) {
+	    					String shape = readTxtShape(line);
+	    				}
+	    			}
+	            }
+	        }catch (IOException e) {
+	        	e.printStackTrace();
+	        }
+			frame.repaint();
+	        btnEnable.addShapeInList(model.getShapes().size());
+			btnEnable.addShapeInSelectedList(selectedShapesList.size());
+			btnEnable.addRedoList(tempCommands.size());
+			btnEnable.addUndoList(commands.size());
+	    }
+	}
+	
+	private String[] readLine(String linee) {
+		String[] newLine = new String[10];
+		String[] parts = linee.split("!");
+		String[] shape = parts[1].split("->");
+		String[] line = shape[1].split(" ");
+		String[] points = line[0].split(";");
+		String[] startCoordinates = points[0].split(":");
+		String[] endCoordinates = points[1].split(":");
+		String[] startPointCoordinates = startCoordinates[1].split(",");
+		String[] endPointCoordinates = endCoordinates[1].split(",");
+		String[] startX = startPointCoordinates[0].split("=");
+		String[] startY = startPointCoordinates[1].split("=");
+		String[] endX = endPointCoordinates[0].split("=");
+		String[] endY = endPointCoordinates[1].split("=");
+		String regex = "r=(\\d+),g=(\\d+),b=(\\d+)";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher  = pattern.matcher(line[1]);
+		newLine[0] = startX[1];
+		newLine[1] = startY[1];
+		newLine[2] = endX[1];
+		newLine[3] = endY[1];
+		if(matcher.find()) {
+			newLine[4] = matcher.group(1);
+			newLine[5] = matcher.group(2);
+			newLine[6] = matcher.group(3);
+		}
+		return newLine;
+	}
+	
+	private String[] readPoint(String line) {
+		String[] newPoint = new String[10];
+		String[] parts = line.split("!");
+		String[] shape = parts[1].split("->");
+		String[] point = shape[1].split(" ");
+		String[] coordinates = point[0].split(",");
+		String[] xCoordinates = coordinates[0].split("=");
+		String[] yCoordinates = coordinates[1].split("=");
+		String regex = "r=(\\d+),g=(\\d+),b=(\\d+)";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher  = pattern.matcher(point[1]);
+		newPoint[0] = xCoordinates[1];
+		newPoint[1] = yCoordinates[1];
+		if(matcher.find()) {
+			newPoint[2] = matcher.group(1);
+			newPoint[3] = matcher.group(2);
+			newPoint[4] = matcher.group(3);
+		}
+		return newPoint;
+	}
+	
+	private String readTxtShape(String line) {
+		String[] parts = line.split("!");
+		String[] shape = parts[1].split("->");
+		return shape[0];
+	}
+	
+	private String readTxtCommand(String line) {
+		String[] parts = line.split("!");
+		return parts[0];
 	}
 
 	private String readUndoCommand() {

@@ -374,7 +374,7 @@ public class DrawingFrame extends JFrame {
 		loadFromTxt.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				controller.loadTxtFile();
 			}
 		});
 	}
