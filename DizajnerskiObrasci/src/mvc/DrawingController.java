@@ -70,6 +70,9 @@ public class DrawingController {
 	// UNDO I REDO ZA EDIT :)
 	private Stack<Command> editCommands = new Stack<Command>();
 	private Stack<Command> tempEditCommands = new Stack<Command>();
+	
+	private Stack<Command> selectCommands = new Stack<Command>();
+	private Stack<Command> tempSelectCommands = new Stack<Command>();
 
 	private String command;
 	private String drawCommand;
@@ -150,9 +153,9 @@ public class DrawingController {
 			frame.repaint();
 			if (shapes.get(br).contains(x, y) && go) {
 				if (!selectedShapesList.contains(shapes.get(br))) {
-					shapes.get(br).setSelected(true);
-					selectedShapesList.add(shapes.get(br));
-					indexOfSelected.put(shapes.get(br).toString(), selectedShapesList.indexOf(shapes.get(br)));
+					SelectShapeCmd ssc = new SelectShapeCmd(shapes.get(br), selectedShapesList);
+					ssc.execute();
+					selectCommands.push(ssc);
 					selectedShape = shapes.get(br);
 					blank = true;
 					tempCommands.clear();
@@ -162,8 +165,9 @@ public class DrawingController {
 					btnEnable.addUndoList(commands.size());
 				} else {
 					Shape deselectedShape = shapes.get(br);
-					deselectedShape.setSelected(false);
-					deselectedShapesList.add(deselectedShape);
+					DeselectShapeCmd dsc = new DeselectShapeCmd(shapes.get(br), selectedShapesList);
+					dsc.execute();
+					selectCommands.push(dsc);
 					frame.commandList.append("DESELECTED!" + deselectedShape + "\n");
 					commands.add("DESELECTED!" + deselectedShape);
 					selectedShapesList.remove(deselectedShape);
@@ -740,16 +744,14 @@ public class DrawingController {
 			} else if(readCommand().equals("SELECTED")) {
 				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
-				deselectedShapesList.add(selectedShapesList.remove(selectedShapesList.size() - 1));
-				SelectShapeCmd ssc = new SelectShapeCmd(model, model.getShapes().indexOf(deselectedShapesList.get(deselectedShapesList.size() - 1)));
-				ssc.unexecute();
+				selectCommands.peek().unexecute();
+				tempSelectCommands.push(selectCommands.pop());
 				frame.repaint();
 			} else if(readCommand().equals("DESELECTED")) {
 				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
-				selectedShapesList.add(deselectedShapesList.remove(deselectedShapesList.size() - 1));
-				DeselectShapeCmd dsc = new DeselectShapeCmd(model, model.getShapes().indexOf(selectedShapesList.get(selectedShapesList.size() - 1)));
-				dsc.unexecute();
+				selectCommands.peek().unexecute();
+				tempSelectCommands.push(selectCommands.pop());
 				frame.repaint();
 			}
 			btnEnable.addShapeInList(model.getShapes().size());
@@ -850,16 +852,14 @@ public class DrawingController {
 			} else if(readUndoCommand().equals("SELECTED")) {
 				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
-				selectedShapesList.add(deselectedShapesList.remove(deselectedShapesList.size() - 1));
-				SelectShapeCmd ssc = new SelectShapeCmd(model, model.getShapes().indexOf(selectedShapesList.get(selectedShapesList.size() - 1)));
-				ssc.execute();
+				tempSelectCommands.peek().execute();
+				selectCommands.push(tempSelectCommands.pop());
 				frame.repaint();
 			} else if(readUndoCommand().equals("DESELECTED")) {
 				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
-				deselectedShapesList.add(selectedShapesList.remove(selectedShapesList.size() - 1));
-				DeselectShapeCmd dsc = new DeselectShapeCmd(model, model.getShapes().indexOf(deselectedShapesList.get(deselectedShapesList.size() - 1)));
-				dsc.execute();
+				tempSelectCommands.peek().execute();
+				selectCommands.push(tempSelectCommands.pop());
 				frame.repaint();
 			}
 			btnEnable.addShapeInList(model.getShapes().size());

@@ -7,22 +7,24 @@ import mvc.DrawingModel;
 
 public class SelectShapeCmd implements Command {
 
-	private DrawingModel model;
-	private int index;
+	private Shape shape;
+	private ArrayList<Shape> selectedShapeList = new ArrayList<Shape>();
 	
-	public  SelectShapeCmd(DrawingModel model, int index) {
-		this.model = model;
-		this.index = index;
+	public  SelectShapeCmd(Shape shape, ArrayList<Shape> selectedShapeList) {
+		this.shape = shape;
+		this.selectedShapeList = selectedShapeList;
 	}
 	
 	@Override
 	public void execute() {
-		model.getShapes().get(index).setSelected(true);
+		shape.setSelected(true);
+		selectedShapeList.add(shape);
 	}
 
 	@Override
 	public void unexecute() {
-		model.getShapes().get(index).setSelected(false);
+		shape.setSelected(false);
+		selectedShapeList.remove(shape);
 	}
 
 }
