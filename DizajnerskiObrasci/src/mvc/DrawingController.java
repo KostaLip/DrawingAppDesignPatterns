@@ -77,7 +77,7 @@ public class DrawingController {
 	// UNDO I REDO ZA EDIT :)
 	private Stack<Command> editCommands = new Stack<Command>();
 	private Stack<Command> tempEditCommands = new Stack<Command>();
-	
+
 	private Stack<Command> selectCommands = new Stack<Command>();
 	private Stack<Command> tempSelectCommands = new Stack<Command>();
 
@@ -89,7 +89,7 @@ public class DrawingController {
 	private Stack<Shape> tempShapes = new Stack<Shape>();
 	private Stack<Integer> indexs = new Stack<Integer>();
 	private Stack<Shape> tempDeletedShapes = new Stack<Shape>();
-	
+
 	private ArrayList<Shape> deselectedShapesList = new ArrayList<Shape>();
 	public ArrayList<Shape> selectedShapesList = new ArrayList<Shape>();
 	private Map<String, Integer> indexOfSelected = new HashMap<String, Integer>();
@@ -229,7 +229,7 @@ public class DrawingController {
 					String newState = newPoint.toString();
 					editCommands.push(new EditPointCmd(p, newPoint));
 					editCommands.peek().execute();
-					commands.add("EDITED!" + oldState + "?" + newState);
+					commands.add("EDITED!" + oldState + "/" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					tempCommands.clear();
 					btnEnable.addShapeInList(model.getShapes().size());
@@ -263,7 +263,7 @@ public class DrawingController {
 					String newState = newRectangle.toString();
 					editCommands.push(new EditRectangleCmd(r, newRectangle));
 					editCommands.peek().execute();
-					commands.add("EDITED!" + oldState + "?" + newState);
+					commands.add("EDITED!" + oldState + "/" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					tempCommands.clear();
 					btnEnable.addShapeInList(model.getShapes().size());
@@ -291,7 +291,7 @@ public class DrawingController {
 					newLine.getEndPoint().setY(dlgLine.getLine().getEndPoint().getY());
 					newLine.setColor(dlgLine.getLine().getColor());
 					String newState = newLine.toString();
-					commands.add("EDITED!" + oldState + "?" + newState);
+					commands.add("EDITED!" + oldState + "/" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					editCommands.push(new EditLineCmd(l, newLine));
 					editCommands.peek().execute();
@@ -327,7 +327,7 @@ public class DrawingController {
 					String newState = newDonut.toString();
 					editCommands.push(new EditDonutCmd(d, newDonut));
 					editCommands.peek().execute();
-					commands.add("EDITED!" + oldState + "?" + newState);
+					commands.add("EDITED!" + oldState + "/" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					tempCommands.clear();
 					btnEnable.addShapeInList(model.getShapes().size());
@@ -359,7 +359,7 @@ public class DrawingController {
 					String newState = newCircle.toString();
 					editCommands.push(new EditCircleCmd(c, newCircle));
 					editCommands.peek().execute();
-					commands.add("EDITED!" + oldState + "?" + newState);
+					commands.add("EDITED!" + oldState + "/" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					tempCommands.clear();
 					btnEnable.addShapeInList(model.getShapes().size());
@@ -391,7 +391,7 @@ public class DrawingController {
 					String newState = newHexagon.toString();
 					editCommands.push(new EditHexagonCmd(hexagon, newHexagon));
 					editCommands.peek().execute();
-					commands.add("EDITED!" + oldState + "?" + newState);
+					commands.add("EDITED!" + oldState + "/" + newState);
 					frame.commandList.append(commands.get(commands.size() - 1) + "\n");
 					tempCommands.clear();
 					btnEnable.addShapeInList(model.getShapes().size());
@@ -524,7 +524,8 @@ public class DrawingController {
 
 	public void toFront(boolean undoOrRedo) {
 		if (!undoOrRedo) {
-			if (selectedShapesList.size() == 1 && model.getShapes().indexOf(selectedShapesList.get(0)) != model.getShapes().size() - 1) {
+			if (selectedShapesList.size() == 1
+					&& model.getShapes().indexOf(selectedShapesList.get(0)) != model.getShapes().size() - 1) {
 				Shape selectedShape = selectedShapesList.get(0);
 				if (model.getShapes().indexOf(selectedShape) != model.getShapes().size() - 1) {
 					Collections.swap(model.getShapes(), model.getShapes().indexOf(selectedShape),
@@ -580,7 +581,8 @@ public class DrawingController {
 
 	public void bringToFront(boolean undoOrRedo) {
 		if (!undoOrRedo) {
-			if (selectedShapesList.size() == 1 && model.getShapes().indexOf(selectedShapesList.get(0)) != model.getShapes().size() - 1) {
+			if (selectedShapesList.size() == 1
+					&& model.getShapes().indexOf(selectedShapesList.get(0)) != model.getShapes().size() - 1) {
 				Shape selectedShape = selectedShapesList.get(0);
 				if (model.getShapes().size() >= 2) {
 					ArrayList<Shape> tempList = new ArrayList<Shape>();
@@ -671,7 +673,7 @@ public class DrawingController {
 	public void undo() {
 		if (commands.size() != 0) {
 			if (readCommand().equals("Added")) {
-				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1));
+				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
 				AddShapeCmd asc = new AddShapeCmd(model.get(model.getShapes().size() - 1), model);
 				tempShapes.push(model.get(model.getShapes().size() - 1));
@@ -679,7 +681,7 @@ public class DrawingController {
 				frame.repaint();
 			} else if (readCommand().equals("Deleted")) {
 				try {
-					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1));
+					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 					tempCommands.add(commands.remove(commands.size() - 1));
 					deletedShapes.peek().setSelected(true);
 					selectedShapesList.add(deletedShapes.peek());
@@ -691,22 +693,22 @@ public class DrawingController {
 
 				}
 			} else if (readCommand().equals("ToFront")) {
-				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1));
+				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
 				tfc.unexecute();
 				frame.repaint();
 			} else if (readCommand().equals("ToBack")) {
-				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1));
+				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
 				tbc.unexecute();
 				frame.repaint();
 			} else if (readCommand().equals("BringToFront")) {
-				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1));
+				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
 				btfc.unexecute();
 				frame.repaint();
 			} else if (readCommand().equals("BringToBack")) {
-				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1));
+				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
 				btbc.unexecute();
 				frame.repaint();
@@ -748,13 +750,13 @@ public class DrawingController {
 					tempEditCommands.push(editCommands.pop());
 					frame.repaint();
 				}
-			} else if(readCommand().equals("SELECTED")) {
+			} else if (readCommand().equals("SELECTED")) {
 				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
 				selectCommands.peek().unexecute();
 				tempSelectCommands.push(selectCommands.pop());
 				frame.repaint();
-			} else if(readCommand().equals("DESELECTED")) {
+			} else if (readCommand().equals("DESELECTED")) {
 				frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 				tempCommands.add(commands.remove(commands.size() - 1));
 				selectCommands.peek().unexecute();
@@ -785,13 +787,13 @@ public class DrawingController {
 	public void redo() {
 		if (tempCommands.size() != 0) {
 			if (readUndoCommand().equals("Added")) {
-				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1));
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				AddShapeCmd asc = new AddShapeCmd(tempShapes.pop(), model);
 				asc.execute();
 				frame.repaint();
 			} else if (readUndoCommand().equals("Deleted")) {
-				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1));
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				deletedShapes.push(tempDeletedShapes.peek());
 				indexs.push(model.getShapes().indexOf(tempDeletedShapes.peek()));
@@ -799,22 +801,22 @@ public class DrawingController {
 				rsc.execute();
 				frame.repaint();
 			} else if (readUndoCommand().equals("ToFront")) {
-				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1));
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				tfc.execute();
 				frame.repaint();
 			} else if (readUndoCommand().equals("ToBack")) {
-				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1));
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				tbc.execute();
 				frame.repaint();
 			} else if (readUndoCommand().equals("BringToFront")) {
-				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1));
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				btfc.execute();
 				frame.repaint();
 			} else if (readUndoCommand().equals("BringToBack")) {
-				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1));
+				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				btbc.execute();
 				frame.repaint();
@@ -856,13 +858,13 @@ public class DrawingController {
 					editCommands.push(tempEditCommands.pop());
 					frame.repaint();
 				}
-			} else if(readUndoCommand().equals("SELECTED")) {
+			} else if (readUndoCommand().equals("SELECTED")) {
 				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				tempSelectCommands.peek().execute();
 				selectCommands.push(tempSelectCommands.pop());
 				frame.repaint();
-			} else if(readUndoCommand().equals("DESELECTED")) {
+			} else if (readUndoCommand().equals("DESELECTED")) {
 				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				tempSelectCommands.peek().execute();
@@ -887,13 +889,13 @@ public class DrawingController {
 			 */
 		}
 	}
-	
+
 	public void saveFile() {
 		JFileChooser fileChooser = new JFileChooser();
 		int userSelection = fileChooser.showSaveDialog(frame);
 		fileChooser.setDialogTitle("Save as");
 		fileChooser.setVisible(true);
-		if(userSelection == JFileChooser.APPROVE_OPTION) {
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
 			String path = file.getAbsolutePath();
 			LoadSaveBin lsb = new LoadSaveBin(model, this);
@@ -902,35 +904,40 @@ public class DrawingController {
 			lst.saveF(path + ".txt");
 		}
 	}
-	
+
 	public void loadBinFile() {
 		JFileChooser fileChooser = new JFileChooser();
-	    fileChooser.setDialogTitle("Open");
-	    fileChooser.setVisible(true);
+		fileChooser.setDialogTitle("Open");
+		fileChooser.setVisible(true);
 
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter("Binary Files", "bin");
-	    fileChooser.setFileFilter(filter);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Binary Files", "bin");
+		fileChooser.setFileFilter(filter);
 
-	    int userSelection = fileChooser.showOpenDialog(frame);
-	    if (userSelection == JFileChooser.APPROVE_OPTION) {
-	        File file = fileChooser.getSelectedFile();
-	        String filePath = file.getAbsolutePath();
-	        LoadSaveBin lsb = new LoadSaveBin(model, this);
-	        lsb.load(filePath);
-	        frame.repaint();
-	        btnEnable.addShapeInList(model.getShapes().size());
+		int userSelection = fileChooser.showOpenDialog(frame);
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
+			File file = fileChooser.getSelectedFile();
+			String filePath = file.getAbsolutePath();
+			LoadSaveBin lsb = new LoadSaveBin(model, this);
+			lsb.load(filePath);
+			frame.repaint();
+			btnEnable.addShapeInList(model.getShapes().size());
 			btnEnable.addShapeInSelectedList(selectedShapesList.size());
 			btnEnable.addRedoList(tempCommands.size());
 			btnEnable.addUndoList(commands.size());
-	    }
+		}
 	}
-	
+
 	public void loadTxt() {
-		
+
 	}
-	
+
 	public void loadTxtFile() {
 		model.getShapes().clear();
+		selectedShapesList.clear();
+		indexs.clear();
+		commands.clear();
+		tempCommands.clear();
+		frame.commandList.setText("");
 		frame.repaint();
 		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home")+"/Desktop");
 	    fileChooser.setDialogTitle("Open");
@@ -948,43 +955,98 @@ public class DrawingController {
 	            BufferedReader reader = new BufferedReader(new FileReader(file));
 	            String line;
 	            while ((line = reader.readLine()) != null) {
-	            	int option = JOptionPane.showConfirmDialog(null, "DO YOU WANT TO DELETE SELECTED SHAPES");
+	            	int option = JOptionPane.showConfirmDialog(null, "DO YOU WANT TO EXECUTE THIS COMMAND:" + "\n" + line);
 	    			if (option == JOptionPane.YES_OPTION) {
 	    				String command = readTxtCommand(line);
 	    				if(command.equals("Added")) {
-	    					String shape = readTxtShape(line);
-	    					if(shape.equals("Point")) {
-	    						String[] newPoint = readPoint(line);
-	    						int x = Integer.parseInt(newPoint[0]);
-	    						int y = Integer.parseInt(newPoint[1]);
-	    						int r = Integer.parseInt(newPoint[2]);
-	    						int g = Integer.parseInt(newPoint[3]);
-	    						int b = Integer.parseInt(newPoint[4]);
-	    						Shape point = new Point(x, y);
-	    						point.setColor(new Color(r, g, b));
-	    						model.add(point);
-	    						frame.repaint();
-	    						System.out.println(shape + " x=" + x + " y=" + y + " r=" + r + 
-	    								" g=" + g + " b=" + b);
-	    					} else if(shape.equals("Line")) {
-	    						String[] newLine = readLine(line);
-	    						int startX = Integer.parseInt(newLine[0]);
-	    						int startY = Integer.parseInt(newLine[1]);
-	    						int endX = Integer.parseInt(newLine[2]);
-	    						int endY = Integer.parseInt(newLine[3]);
-	    						int r = Integer.parseInt(newLine[4]);
-	    						int g = Integer.parseInt(newLine[5]);
-	    						int b = Integer.parseInt(newLine[6]);
-	    						Point startPoint = new Point(startX, startY);
-	    						Point endPoint = new Point(endX, endY);
-	    						Shape nLine = new Line(startPoint, endPoint);
-	    						nLine.setColor(new Color(r, g, b));
-	    						model.add(nLine);
-	    						frame.repaint();
-	    						
-	    					}
+	    					Shape shape = readShape(line);
+	    					model.add(shape);
+    						frame.commandList.append(line + "\n");
+    						commands.add(line);
+    						frame.repaint();
 	    				} else if(command.equals("Deleted")) {
-	    					String shape = readTxtShape(line);
+	    					Shape shape = readShape(line);
+	    					if(checkShapeInSelectedList(shape) != null) {
+	    						deletedShapes.push(checkShapeInSelectedList(shape));
+	    						frame.commandList.append(line + "\n");
+	    						commands.add(command);
+	    						indexs.push(model.getShapes().indexOf(checkShapeInSelectedList(shape)));
+	    						model.getShapes().remove(checkShapeInSelectedList(shape));
+	    						selectedShapesList.remove(checkShapeInSelectedList(shape));
+	    						frame.repaint();
+	    					}
+	    				} else if(command.equals("SELECTED")) {
+	    					Shape shape = readShape(line);
+	    					if(checkIsSelected(shape) != null) {
+    							SelectShapeCmd ssc = new SelectShapeCmd(checkIsSelected(shape), selectedShapesList);
+    							ssc.execute();
+    							selectCommands.push(ssc);
+    							selectedShape = checkIsSelected(shape);
+    							frame.commandList.append(line + "\n");
+	    						commands.add(line);
+	    						frame.repaint();
+    						}
+	    				} else if(command.equals("DESELECTED")) {
+	    					Shape shape = readShape(line);
+	    					if(checkShapeInSelectedList(shape) != null) {
+	    						Shape deselectedShape = checkShapeInSelectedList(shape);
+	    						DeselectShapeCmd dsc = new DeselectShapeCmd(deselectedShape, selectedShapesList);
+	    						dsc.execute();
+	    						selectCommands.push(dsc);
+	    						frame.commandList.append(line + "\n");
+	    						commands.add(line);
+	    						selectedShapesList.remove(deselectedShape);
+	    						frame.repaint();
+	    					}
+	    				} else if(command.equals("EDITED")) {
+	    					Shape[] shapes = readNewState(line);
+	    					Shape oldShape = shapes[0];
+	    					Shape newShape = shapes[1];
+	    					if(checkShapeInSelectedList(oldShape) != null && selectedShapesList.size() == 1) {
+	    						if(oldShape instanceof Point) {
+	    							Point oldPoint = (Point)oldShape;
+	    							Point newPoint = (Point)newShape;
+	    							System.out.println(oldPoint + " " + newPoint);
+	    							editCommands.push(new EditPointCmd(oldPoint, newPoint));
+	    							editCommands.peek().execute();
+	    							readNewState(line);
+	    							commands.add(line);
+	    							frame.commandList.append(line + "\n");
+	    						} else if(oldShape instanceof Line) {
+	    							Line oldLine = (Line)oldShape;
+	    							Line newLine = (Line)newShape;
+	    							System.out.println(oldLine + " " + newLine);
+	    							Line linee = new Line(new Point(), new Point());
+	    							linee.getStartPoint().setX(newLine.getStartPoint().getX());
+	    							linee.getStartPoint().setY(newLine.getStartPoint().getY());
+	    							linee.getEndPoint().setX(newLine.getEndPoint().getX());
+	    							linee.getEndPoint().setY(newLine.getEndPoint().getY());
+	    							linee.setColor(newLine.getColor());
+	    							editCommands.push(new EditLineCmd(oldLine, linee));
+	    							editCommands.peek().execute();
+	    							readNewState(line);
+	    							commands.add(line);
+	    							frame.commandList.append(line + "\n");
+	    						} else if(oldShape instanceof Rectangle) {
+	    							Rectangle oldRectangle = (Rectangle)oldShape;
+	    							Rectangle newRectangle = (Rectangle)newShape;
+	    							System.out.println(oldRectangle + " " + newRectangle);
+	    							editCommands.push(new EditRectangleCmd(oldRectangle, newRectangle));
+	    							editCommands.peek().execute();
+	    							readNewState(line);
+	    							commands.add(line);
+	    							frame.commandList.append(line + "\n");
+	    						} else if(oldShape instanceof Circle) {
+	    							Circle oldCircle = (Circle)oldShape;
+	    							Circle newCircle = (Circle)newShape;
+	    							System.out.println(oldCircle + " " + newCircle);
+	    							editCommands.push(new EditCircleCmd(oldCircle, newCircle));
+	    							editCommands.peek().execute();
+	    							readNewState(line);
+	    							commands.add(line);
+	    							frame.commandList.append(line + "\n");
+	    						}
+	    					}
 	    				}
 	    			}
 	            }
@@ -997,12 +1059,223 @@ public class DrawingController {
 			btnEnable.addRedoList(tempCommands.size());
 			btnEnable.addUndoList(commands.size());
 	    }
+
 	}
 	
+	private Shape checkShapeInSelectedList(Shape shape) {
+		for(int i = 0; i <= selectedShapesList.size() - 1; i++) {
+			System.out.println("Vrti me u selektovanoj listi");
+			if(shape.equals(selectedShapesList.get(i))) {
+				return selectedShapesList.get(i);
+			}
+		}
+		return null;
+	}
+	
+	private Shape[] readNewState(String line) {
+		Shape[] shapes = new Shape[2];
+		String[] shape = line.split("/");
+		Shape oldShape = readShape(shape[0]);
+		Shape newShape = readShape("EDITED!" + shape[1]);
+		shapes[0] = oldShape;
+		shapes[1] = newShape;
+		return shapes;
+	}
+	
+	private Shape readShape(String line) {
+		String shape = readTxtShape(line);
+		if(shape.equals("Point")) {
+			String[] newPoint = readPoint(line);
+			int x = Integer.parseInt(newPoint[0]);
+			int y = Integer.parseInt(newPoint[1]);
+			int r = Integer.parseInt(newPoint[2]);
+			int g = Integer.parseInt(newPoint[3]);
+			int b = Integer.parseInt(newPoint[4]);
+			Shape point = new Point(x, y);
+			point.setColor(new Color(r, g, b));
+			return point;
+		} else if(shape.equals("Line")) {
+			String[] newLine = readLine(line);
+			int startX = Integer.parseInt(newLine[0]);
+			int startY = Integer.parseInt(newLine[1]);
+			int endX = Integer.parseInt(newLine[2]);
+			int endY = Integer.parseInt(newLine[3]);
+			int r = Integer.parseInt(newLine[4]);
+			int g = Integer.parseInt(newLine[5]);
+			int b = Integer.parseInt(newLine[6]);
+			Point startPoint = new Point(startX, startY);
+			Point endPoint = new Point(endX, endY);
+			Shape nLine = new Line(startPoint, endPoint);
+			nLine.setColor(new Color(r, g, b));
+			return nLine;
+			
+		} else if(shape.equals("Rectangle")) {
+			String[] newRectangle = readRectangle(line);
+			int upperX = Integer.parseInt(newRectangle[0]);
+			int upperY = Integer.parseInt(newRectangle[1]);
+			int width = Integer.parseInt(newRectangle[2]);
+			int height = Integer.parseInt(newRectangle[3]);
+			int colorR = Integer.parseInt(newRectangle[4]);
+			int colorG = Integer.parseInt(newRectangle[5]);
+			int colorB = Integer.parseInt(newRectangle[6]);
+			int innerR = Integer.parseInt(newRectangle[7]);
+			int innerG = Integer.parseInt(newRectangle[8]);
+			int innerB = Integer.parseInt(newRectangle[9]);
+			Point upperLeftPoint = new Point(upperX, upperY);
+			Shape rectangle = new Rectangle(upperLeftPoint, width, height);
+			rectangle.setColor(new Color(colorR, colorG, colorB));
+			rectangle.setInnerColor(new Color(innerR, innerG, innerB));
+			return rectangle;
+		} else if(shape.equals("Circle")) {
+			String[] newCircle = readCircle(line);
+			int centerX = Integer.parseInt(newCircle[0]);
+			int centerY = Integer.parseInt(newCircle[1]);
+			int radius = Integer.parseInt(newCircle[2]);
+			int colorR = Integer.parseInt(newCircle[3]);
+			int colorG = Integer.parseInt(newCircle[4]);
+			int colorB = Integer.parseInt(newCircle[5]);
+			int innerR = Integer.parseInt(newCircle[6]);
+			int innerG = Integer.parseInt(newCircle[7]);
+			int innerB = Integer.parseInt(newCircle[8]);
+			Point center = new Point(centerX, centerY);
+			Shape circle = new Circle(center, radius);
+			circle.setColor(new Color(colorR, colorG, colorB));
+			circle.setInnerColor(new Color(innerR, innerG, innerB));
+			return circle;
+		} else if(shape.equals("Donut")) {
+			String[] newDonut = readDonut(line);
+			int centerX = Integer.parseInt(newDonut[0]);
+			int centerY = Integer.parseInt(newDonut[1]);
+			int radius = Integer.parseInt(newDonut[2]);
+			int innerRadius = Integer.parseInt(newDonut[9]);
+			int colorR = Integer.parseInt(newDonut[3]);
+			int colorG = Integer.parseInt(newDonut[4]);
+			int colorB = Integer.parseInt(newDonut[5]);
+			int innerR = Integer.parseInt(newDonut[6]);
+			int innerG = Integer.parseInt(newDonut[7]);
+			int innerB = Integer.parseInt(newDonut[8]);
+			Point center = new Point(centerX, centerY);
+			Shape donut = new Donut(center, radius, innerRadius);
+			donut.setColor(new Color(colorR, colorG, colorB));
+			donut.setInnerColor(new Color(innerR, innerG, innerB));
+			return donut;
+		} else if(shape.equals("Hexagon")) {
+			String[] newHexagon = readCircle(line);
+			int centerX = Integer.parseInt(newHexagon[0]);
+			int centerY = Integer.parseInt(newHexagon[1]);
+			int radius = Integer.parseInt(newHexagon[2]);
+			int colorR = Integer.parseInt(newHexagon[3]);
+			int colorG = Integer.parseInt(newHexagon[4]);
+			int colorB = Integer.parseInt(newHexagon[5]);
+			int innerR = Integer.parseInt(newHexagon[6]);
+			int innerG = Integer.parseInt(newHexagon[7]);
+			int innerB = Integer.parseInt(newHexagon[8]);
+			HexagonAdapter hexagon = new HexagonAdapter(new Hexagon(centerX, centerY, radius));
+			hexagon.setColor(new Color(colorR, colorG, colorB));
+			hexagon.setInnerColor(new Color(innerR, innerG, innerB));
+			return hexagon;
+		}
+		return null;
+	}
+	
+	private Shape checkIsSelected(Shape shape) {
+		for(int i = 0; i <= model.getShapes().size() - 1; i++) {
+			if(model.get(i).equals(shape)) {
+				return model.get(i);
+			}
+		}
+		return null;
+	}
+
+	private String[] readDonut(String line) {
+		String[] newDonut = new String[10];
+		//String[] parts = line.split("!");
+		String[] shape = line.split(" ");
+		String[] donut = shape[0].split("->");
+		String[] donutCoordinates = donut[1].split(":");
+		String[] coordinates = donutCoordinates[1].split(",");
+		String[] xCoordinates = coordinates[0].split("=");
+		String[] yCoordinates = coordinates[1].split("=");
+		String[] radius = coordinates[2].split("=");
+		String[] innerRadius = coordinates[3].split("=");
+		Pattern pattern = Pattern.compile(
+				"Color:java.awt.Color\\[r=(\\d+),g=(\\d+),b=(\\d+)\\],InnerColor:java.awt.Color\\[r=(\\d+),g=(\\d+),b=(\\d+)\\]");
+		Matcher matcher = pattern.matcher(shape[1]);
+		newDonut[0] = xCoordinates[1];
+		newDonut[1] = yCoordinates[1];
+		newDonut[2] = radius[1];
+		if (matcher.find()) {
+			newDonut[3] = matcher.group(1);
+			newDonut[4] = matcher.group(2);
+			newDonut[5] = matcher.group(3);
+			newDonut[6] = matcher.group(4);
+			newDonut[7] = matcher.group(5);
+			newDonut[8] = matcher.group(6);
+		}
+		newDonut[9] = innerRadius[1];
+		return newDonut;
+	}
+
+	private String[] readCircle(String line) {
+		String[] newCircle = new String[10];
+		//String[] parts = line.split("!");
+		String[] shape = line.split(" ");
+		String[] circle = shape[0].split("->");
+		String[] circleCoordinates = circle[1].split(":");
+		String[] coordinates = circleCoordinates[1].split(",");
+		String[] xCoordinates = coordinates[0].split("=");
+		String[] yCoordinates = coordinates[1].split("=");
+		String[] radius = coordinates[2].split("=");
+		Pattern pattern = Pattern.compile(
+				"Color:java.awt.Color\\[r=(\\d+),g=(\\d+),b=(\\d+)\\],InnerColor:java.awt.Color\\[r=(\\d+),g=(\\d+),b=(\\d+)\\]");
+		Matcher matcher = pattern.matcher(shape[1]);
+		newCircle[0] = xCoordinates[1];
+		newCircle[1] = yCoordinates[1];
+		newCircle[2] = radius[1];
+		if (matcher.find()) {
+			newCircle[3] = matcher.group(1);
+			newCircle[4] = matcher.group(2);
+			newCircle[5] = matcher.group(3);
+			newCircle[6] = matcher.group(4);
+			newCircle[7] = matcher.group(5);
+			newCircle[8] = matcher.group(6);
+		}
+		return newCircle;
+	}
+
+	private String[] readRectangle(String line) {
+		String[] newRectangle = new String[10];
+		//String[] parts = line.split("!");
+		String[] shape = line.split(" ");
+		String[] rectangle = shape[0].split("->");
+		String[] recCoordinates = rectangle[1].split(":");
+		String[] coordinates = recCoordinates[1].split(",");
+		String[] xCoordinates = coordinates[0].split("=");
+		String[] yCoordinates = coordinates[1].split("=");
+		String[] width = coordinates[2].split("=");
+		String[] height = coordinates[3].split("=");
+		Pattern pattern = Pattern.compile(
+				"Color:java.awt.Color\\[r=(\\d+),g=(\\d+),b=(\\d+)\\],InnerColor:java.awt.Color\\[r=(\\d+),g=(\\d+),b=(\\d+)\\]");
+		Matcher matcher = pattern.matcher(shape[1]);
+		newRectangle[0] = xCoordinates[1];
+		newRectangle[1] = yCoordinates[1];
+		newRectangle[2] = width[1];
+		newRectangle[3] = height[1];
+		if (matcher.find()) {
+			newRectangle[4] = matcher.group(1);
+			newRectangle[5] = matcher.group(2);
+			newRectangle[6] = matcher.group(3);
+			newRectangle[7] = matcher.group(4);
+			newRectangle[8] = matcher.group(5);
+			newRectangle[9] = matcher.group(6);
+		}
+		return newRectangle;
+	}
+
 	private String[] readLine(String linee) {
 		String[] newLine = new String[10];
-		String[] parts = linee.split("!");
-		String[] shape = parts[1].split("->");
+		//String[] parts = linee.split("!");
+		String[] shape = linee.split("->");
 		String[] line = shape[1].split(" ");
 		String[] points = line[0].split(";");
 		String[] startCoordinates = points[0].split(":");
@@ -1015,33 +1288,33 @@ public class DrawingController {
 		String[] endY = endPointCoordinates[1].split("=");
 		String regex = "r=(\\d+),g=(\\d+),b=(\\d+)";
 		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher  = pattern.matcher(line[1]);
+		Matcher matcher = pattern.matcher(line[1]);
 		newLine[0] = startX[1];
 		newLine[1] = startY[1];
 		newLine[2] = endX[1];
 		newLine[3] = endY[1];
-		if(matcher.find()) {
+		if (matcher.find()) {
 			newLine[4] = matcher.group(1);
 			newLine[5] = matcher.group(2);
 			newLine[6] = matcher.group(3);
 		}
 		return newLine;
 	}
-	
+
 	private String[] readPoint(String line) {
 		String[] newPoint = new String[10];
-		String[] parts = line.split("!");
-		String[] shape = parts[1].split("->");
+		//String[] parts = line.split("!");
+		String[] shape = line.split("->");
 		String[] point = shape[1].split(" ");
 		String[] coordinates = point[0].split(",");
 		String[] xCoordinates = coordinates[0].split("=");
 		String[] yCoordinates = coordinates[1].split("=");
 		String regex = "r=(\\d+),g=(\\d+),b=(\\d+)";
 		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher  = pattern.matcher(point[1]);
+		Matcher matcher = pattern.matcher(point[1]);
 		newPoint[0] = xCoordinates[1];
 		newPoint[1] = yCoordinates[1];
-		if(matcher.find()) {
+		if (matcher.find()) {
 			newPoint[2] = matcher.group(1);
 			newPoint[3] = matcher.group(2);
 			newPoint[4] = matcher.group(3);
@@ -1054,7 +1327,7 @@ public class DrawingController {
 		String[] shape = parts[1].split("->");
 		return shape[0];
 	}
-	
+
 	private String readTxtCommand(String line) {
 		String[] parts = line.split("!");
 		return parts[0];

@@ -3,6 +3,7 @@ package adapter;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import geometry.Circle;
 import geometry.Shape;
 import hexagon.Hexagon;
 
@@ -64,6 +65,20 @@ public class HexagonAdapter extends Shape {
 		
 		return hexagon;
 		
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof HexagonAdapter) {
+			HexagonAdapter pomocni = (HexagonAdapter) obj;
+			if ((this.getCenterX() == pomocni.getCenterX()) && this.getRadius() == pomocni.getRadius()
+					&& (this.getCenterY() == pomocni.getCenterY())) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 	
 	public String toString() {
