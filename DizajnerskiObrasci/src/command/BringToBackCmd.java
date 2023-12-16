@@ -1,23 +1,35 @@
 package command;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+import geometry.Shape;
 import mvc.DrawingController;
+import mvc.DrawingModel;
 
 public class BringToBackCmd implements Command {
 
-	private DrawingController controller;
-	
-	public BringToBackCmd(DrawingController controller) {
-		this.controller = controller;
+	private Shape selectedShape;
+	private int oldIndex;
+	private DrawingModel model;
+
+	public BringToBackCmd(DrawingModel model, Shape shape) {
+		this.model = model;
+		this.selectedShape = shape;
 	}
-	
+
 	@Override
 	public void execute() {
-		controller.bringToBack(true);
+		oldIndex = model.getShapes().lastIndexOf(selectedShape);
+		for(int i = oldIndex; i > 0; i--) {
+			Collections.swap(model.getShapes(), i, i - 1);
+		}
 	}
 
 	@Override
 	public void unexecute() {
-		controller.bringToFront(true);
+		for(int i = oldIndex, j = 0; i > 0; i--, j++) {
+			Collections.swap(model.getShapes(), j, j + 1);
+		}
 	}
-
 }

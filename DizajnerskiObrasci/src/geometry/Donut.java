@@ -74,13 +74,14 @@ public class Donut extends Circle {
         
         outerArea.subtract(innerArea);
         
+        
+        
+        g2d.setColor(getInnerColor());
+        g2d.fill(outerArea);
         g2d.setColor(getColor());
         g2d.drawOval(getCenter().getX() - radius, getCenter().getY() - radius, 2 * radius, 2 * radius);
         g2d.drawOval(getCenter().getX() - innerRadius, getCenter().getY() - innerRadius, 2 * innerRadius,
 				2 * innerRadius);
-        g2d.setColor(getInnerColor());
-        g2d.fill(outerArea);
-
         g2d.dispose();
 
 		if (isSelected()) {
