@@ -24,7 +24,7 @@ public class Point extends Shape {
 	public boolean equals(Object obj) {
 		if (obj instanceof Point) {
 			Point pomocna = (Point) obj;
-			if (this.x == pomocna.x && this.y == pomocna.y) {
+			if (this.x == pomocna.x && this.y == pomocna.y && pomocna.getColor().equals(this.getColor())) {
 				return true;
 			}
 		}

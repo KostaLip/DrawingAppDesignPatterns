@@ -28,7 +28,7 @@ public class Rectangle extends Shape {
 		if (obj instanceof Rectangle) {
 			Rectangle pomocna = (Rectangle) obj;
 			if (this.upperLeftPoint.equals(pomocna.upperLeftPoint) && this.width == pomocna.width
-					&& this.height == pomocna.height)
+					&& this.height == pomocna.height && this.getColor().equals(pomocna.getColor()) && this.getInnerColor().equals(pomocna.getInnerColor()))
 				return true;
 			else
 				return false;

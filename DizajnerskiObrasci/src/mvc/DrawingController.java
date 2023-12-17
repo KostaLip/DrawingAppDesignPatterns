@@ -178,7 +178,7 @@ public class DrawingController {
 					dsc.execute();
 					selectCommands.push(dsc);
 					frame.commandList.append("DESELECTED!" + deselectedShape + "\n");
-					commands.add("DESELECTED!" + deselectedShape);
+					commands.add("DESELECTED!" + deselectedShape + "\n");
 					selectedShapesList.remove(deselectedShape);
 					frame.repaint();
 					tempCommands.clear();
@@ -200,7 +200,7 @@ public class DrawingController {
 		 */
 		if (blank) {
 			commands.add("SELECTED!" + selectedShape + "\n");
-			frame.commandList.append("SELECTED!" + selectedShape);
+			frame.commandList.append("SELECTED!" + selectedShape + "\n");
 		}
 		frame.repaint();
 	}
@@ -585,8 +585,8 @@ public class DrawingController {
 		brings.push(new BringToFrontCmd(model, selectedShapesList.get(0)));
 		brings.peek().execute();
 		command = "BringToFront!" + selectedShape;
-		commands.add(command);
-		frame.commandList.append(command);
+		frame.commandList.append(command + "\n");
+		commands.add(command + "\n");
 		frame.repaint();
 		btnEnable.addRedoList(tempCommands.size());
 		btnEnable.addUndoList(commands.size());
@@ -639,8 +639,8 @@ public class DrawingController {
 		brings.push(new BringToBackCmd(model, selectedShapesList.get(0)));
 		brings.peek().execute();
 		command = "BringToBack!" + selectedShape;
-		commands.add(command);
-		frame.commandList.append(command);
+		frame.commandList.append(command + "\n");
+		commands.add(command + "\n");
 		frame.repaint();
 		btnEnable.addRedoList(tempCommands.size());
 		btnEnable.addUndoList(commands.size());
@@ -699,7 +699,7 @@ public class DrawingController {
 				frame.repaint();
 			} else if (readCommand().equals("Deleted")) {
 				try {
-					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1));
+					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 					tempCommands.add(commands.remove(commands.size() - 1));
 					deletedShapes.peek().setSelected(true);
 					selectedShapesList.add(deletedShapes.peek());
@@ -985,14 +985,14 @@ public class DrawingController {
 	    					Shape shape = readShape(line);
 	    					model.add(shape);
     						frame.commandList.append(line + "\n");
-    						commands.add(line);
+    						commands.add(line + "\n");
     						frame.repaint();
 	    				} else if(command.equals("Deleted")) {
 	    					Shape shape = readShape(line);
 	    					if(checkShapeInSelectedList(shape) != null) {
 	    						deletedShapes.push(checkShapeInSelectedList(shape));
 	    						frame.commandList.append(line + "\n");
-	    						commands.add(command);
+	    						commands.add(command + "\n");
 	    						indexs.push(model.getShapes().indexOf(checkShapeInSelectedList(shape)));
 	    						model.getShapes().remove(checkShapeInSelectedList(shape));
 	    						selectedShapesList.remove(checkShapeInSelectedList(shape));
@@ -1006,18 +1006,20 @@ public class DrawingController {
     							selectCommands.push(ssc);
     							selectedShape = checkIsSelected(shape);
     							frame.commandList.append(line + "\n");
-	    						commands.add(line);
+	    						commands.add(line + "\n");
 	    						frame.repaint();
     						}
 	    				} else if(command.equals("DESELECTED")) {
 	    					Shape shape = readShape(line);
 	    					if(checkShapeInSelectedList(shape) != null) {
+	    						System.out.println("usao sam u deselekt");
 	    						Shape deselectedShape = checkShapeInSelectedList(shape);
 	    						DeselectShapeCmd dsc = new DeselectShapeCmd(deselectedShape, selectedShapesList);
 	    						dsc.execute();
+	    						System.out.println("deselektovan " + deselectedShape);
 	    						selectCommands.push(dsc);
 	    						frame.commandList.append(line + "\n");
-	    						commands.add(line);
+	    						commands.add(line + "\n");
 	    						selectedShapesList.remove(deselectedShape);
 	    						frame.repaint();
 	    					}
@@ -1028,12 +1030,16 @@ public class DrawingController {
 	    					if(checkShapeInSelectedList(oldShape) != null && selectedShapesList.size() == 1) {
 	    						if(oldShape instanceof Point) {
 	    							Point oldPoint = (Point)oldShape;
-	    							Point newPoint = (Point)newShape;
+	    							Point newnewPoint = (Point)newShape;
+	    							Point newPoint = new Point();
+	    							newPoint.setX(newnewPoint.getX());
+	    							newPoint.setY(newnewPoint.getY());
+	    							newPoint.setColor(newnewPoint.getColor());
 	    							System.out.println(oldPoint + " " + newPoint);
 	    							editCommands.push(new EditPointCmd(oldPoint, newPoint));
 	    							editCommands.peek().execute();
-	    							commands.add(line);
 	    							frame.commandList.append(line + "\n");
+	    							commands.add(line + "\n");
 	    							frame.repaint();
 	    						} else if(oldShape instanceof Line) {
 	    							Line oldLine = (Line)oldShape;
@@ -1048,8 +1054,8 @@ public class DrawingController {
 	    							editCommands.push(new EditLineCmd(oldLine, linee));
 	    							editCommands.peek().execute();
 	    							readNewState(line);
-	    							commands.add(line);
 	    							frame.commandList.append(line + "\n");
+	    							commands.add(line + "\n");
 	    							frame.repaint();
 	    						} else if(oldShape instanceof Rectangle) {
 	    							Rectangle oldRectangle = (Rectangle)oldShape;
@@ -1058,8 +1064,8 @@ public class DrawingController {
 	    							editCommands.push(new EditRectangleCmd(oldRectangle, newRectangle));
 	    							editCommands.peek().execute();
 	    							readNewState(line);
-	    							commands.add(line);
 	    							frame.commandList.append(line + "\n");
+	    							commands.add(line + "\n");
 	    							frame.repaint();
 	    						} else if(oldShape instanceof Circle) {
 	    							Circle oldCircle = (Circle)oldShape;
@@ -1068,13 +1074,26 @@ public class DrawingController {
 	    							editCommands.push(new EditCircleCmd(oldCircle, newCircle));
 	    							editCommands.peek().execute();
 	    							readNewState(line);
-	    							commands.add(line);
 	    							frame.commandList.append(line + "\n");
+	    							commands.add(line + "\n");
 	    							frame.repaint();
 	    						}
 	    					}
 	    				}
-	    			}
+	    				else if(command.equals("ToFront")) {
+	    					toFront(false);
+	    				} else if(command.equals("ToBack")) {
+	    					toBack(false);
+	    				} else if(command.equals("BringToFront")) {
+	    					bringToFront(false);
+	    				} else if(command.equals("BringToBack")) {
+	    					bringToBack(false);
+	    				} else if(command.equals("UNDO")) {
+	    					undo();
+	    				} else if(command.equals("REDO")) {
+	    					redo();
+	    				}
+	    			} else {break;}
 	            }
 	        }catch (IOException e) {
 	        	e.printStackTrace();
@@ -1090,8 +1109,7 @@ public class DrawingController {
 	
 	private Shape checkShapeInSelectedList(Shape shape) {
 		for(int i = 0; i <= selectedShapesList.size() - 1; i++) {
-			System.out.println("Vrti me u selektovanoj listi");
-			if(shape.equals(selectedShapesList.get(i))) {
+			if(selectedShapesList.get(i).equals(shape)) {
 				return selectedShapesList.get(i);
 			}
 		}

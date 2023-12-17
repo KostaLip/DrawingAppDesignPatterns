@@ -1,5 +1,7 @@
 package mvc;
 
+import java.awt.Color;
+
 import javax.swing.JFrame;
 
 public class Application {

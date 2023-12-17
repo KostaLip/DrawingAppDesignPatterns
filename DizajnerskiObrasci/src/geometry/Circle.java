@@ -24,7 +24,8 @@ public class Circle extends Shape {
 	public boolean equals(Object obj) {
 		if (obj instanceof Circle) {
 			Circle pomocni = (Circle) obj;
-			if (this.center.equals(pomocni.center) && this.radius == pomocni.radius) {
+			if (this.center.equals(pomocni.center) && this.radius == pomocni.radius
+					&& this.getColor().equals(pomocni.getColor()) && this.getInnerColor().equals(pomocni.getInnerColor())) {
 				return true;
 			} else {
 				return false;
