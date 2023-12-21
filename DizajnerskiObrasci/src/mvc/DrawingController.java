@@ -962,6 +962,16 @@ public class DrawingController {
 		indexs.clear();
 		commands.clear();
 		tempCommands.clear();
+		editCommands.clear();
+		tempEditCommands.clear();
+		brings.clear();
+		tempBrings.clear();
+		deletedShapes.clear();
+		tempDeletedShapes.clear();
+		tempShapes.clear();
+		selectCommands.clear();
+		tempSelectCommands.clear();
+		oldStates.clear();
 		frame.commandList.setText("");
 		frame.repaint();
 		JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home")+"/Desktop");
@@ -1049,7 +1059,7 @@ public class DrawingController {
 	    							newPoint.setX(newnewPoint.getX());
 	    							newPoint.setY(newnewPoint.getY());
 	    							newPoint.setColor(newnewPoint.getColor());
-	    							System.out.println(oldPoint + " " + newPoint);
+	    							System.out.println(oldShape + " " + newShape);
 	    							editCommands.push(new EditPointCmd(oldPoint, newPoint));
 	    							editCommands.peek().execute();
 	    							frame.commandList.append(line + "\n");
