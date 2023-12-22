@@ -70,8 +70,8 @@ public class HexagonAdapter extends Shape {
 	public boolean equals(Object obj) {
 		if (obj instanceof HexagonAdapter) {
 			HexagonAdapter pomocni = (HexagonAdapter) obj;
-			if ((this.getCenterX() == pomocni.getCenterX()) && this.getRadius() == pomocni.getRadius()
-					&& (this.getCenterY() == pomocni.getCenterY()) && this.getColor().equals(pomocni.getColor())
+			if (this.getCenterX() == pomocni.getCenterX() && this.getRadius() == pomocni.getRadius()
+					&& this.getCenterY() == pomocni.getCenterY() && this.getColor().equals(pomocni.getColor())
 					&& this.getInnerColor().equals(pomocni.getInnerColor())) {
 				return true;
 			} else {

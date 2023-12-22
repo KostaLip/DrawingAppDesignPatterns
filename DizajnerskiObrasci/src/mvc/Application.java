@@ -18,6 +18,7 @@ public class Application {
 		frame.setBounds(100, 100, 1200, 810);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("Kosta Bjelogrlic IT31-2021");
+		System.out.println("SRECNO MASTERU PARTIZAN SAMPION :)");
 		frame.setVisible(true);
 		
 	}

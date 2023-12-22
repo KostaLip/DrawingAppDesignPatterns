@@ -765,7 +765,7 @@ public class DrawingController {
 					tempEditCommands.push(editCommands.pop());
 					frame.repaint();
 				} else if (readEditShape().equals("Hexagon")) {
-					frame.commandList.append("UNDO" + commands.get(commands.size() - 1) + "\n");
+					frame.commandList.append("UNDO!" + commands.get(commands.size() - 1) + "\n");
 					tempCommands.add(commands.remove(commands.size() - 1));
 					editCommands.peek().unexecute();
 					tempEditCommands.push(editCommands.pop());
@@ -814,7 +814,6 @@ public class DrawingController {
 				asc.execute();
 				frame.repaint();
 			} else if (readUndoCommand().equals("Deleted")) {
-				System.out.println("usao sam u redo");
 				frame.commandList.append("REDO!" + tempCommands.get(tempCommands.size() - 1) + "\n");
 				commands.add(tempCommands.remove(tempCommands.size() - 1));
 				deletedShapes.push(tempDeletedShapes.peek());
@@ -1034,11 +1033,9 @@ public class DrawingController {
 	    				} else if(command.equals("DESELECTED")) {
 	    					Shape shape = readShape(line);
 	    					if(checkShapeInSelectedList(shape) != null) {
-	    						System.out.println("usao sam u deselekt");
 	    						Shape deselectedShape = checkShapeInSelectedList(shape);
 	    						DeselectShapeCmd dsc = new DeselectShapeCmd(deselectedShape, selectedShapesList);
 	    						dsc.execute();
-	    						System.out.println("deselektovan " + deselectedShape);
 	    						selectCommands.push(dsc);
 	    						frame.commandList.append(line + "\n");
 	    						commands.add(line);
@@ -1050,7 +1047,6 @@ public class DrawingController {
 	    					Shape[] shapes = readNewState(line);
 	    					Shape oldShape = shapes[0];
 	    					Shape newShape = shapes[1];
-	    					System.out.println(oldShape + " " + newShape);
 	    					if(checkShapeInSelectedList(oldShape) != null && selectedShapesList.size() == 1) {
 	    						if(oldShape instanceof Point) {
 	    							Point oldPoint = (Point)model.get(model.getShapes().indexOf((Point)oldShape));
@@ -1059,7 +1055,6 @@ public class DrawingController {
 	    							newPoint.setX(newnewPoint.getX());
 	    							newPoint.setY(newnewPoint.getY());
 	    							newPoint.setColor(newnewPoint.getColor());
-	    							System.out.println(oldShape + " " + newShape);
 	    							editCommands.push(new EditPointCmd(oldPoint, newPoint));
 	    							editCommands.peek().execute();
 	    							frame.commandList.append(line + "\n");
@@ -1068,7 +1063,6 @@ public class DrawingController {
 	    						} else if(oldShape instanceof Line) {
 	    							Line oldLine = (Line)model.get(model.getShapes().indexOf((Line)oldShape));
 	    							Line newLine = (Line)newShape;
-	    							System.out.println(oldLine + " " + newLine);
 	    							Line linee = new Line(new Point(), new Point());
 	    							linee.getStartPoint().setX(newLine.getStartPoint().getX());
 	    							linee.getStartPoint().setY(newLine.getStartPoint().getY());
@@ -1083,7 +1077,6 @@ public class DrawingController {
 	    						} else if(oldShape instanceof Rectangle) {
 	    							Rectangle oldRectangle = (Rectangle)model.get(model.getShapes().indexOf((Rectangle)oldShape));
 	    							Rectangle newRectangle = (Rectangle)newShape;
-	    							System.out.println(oldRectangle + " " + newRectangle);
 	    							editCommands.push(new EditRectangleCmd(oldRectangle, newRectangle));
 	    							editCommands.peek().execute();
 	    							frame.commandList.append(line + "\n");
@@ -1092,7 +1085,6 @@ public class DrawingController {
 	    						} else if(oldShape instanceof Circle) {
 	    							Circle oldCircle = (Circle)model.get(model.getShapes().indexOf((Circle)oldShape));
 	    							Circle newCircle = (Circle)newShape;
-	    							System.out.println(oldCircle + " " + newCircle);
 	    							editCommands.push(new EditCircleCmd(oldCircle, newCircle));
 	    							editCommands.peek().execute();
 	    							frame.commandList.append(line + "\n");
@@ -1101,21 +1093,22 @@ public class DrawingController {
 	    						} else if(oldShape instanceof Donut) {
 	    							Donut oldDonut = (Donut)model.get(model.getShapes().indexOf((Donut)oldShape));
 	    							Donut newDonut = (Donut)newShape;
-	    							System.out.println(oldDonut + " " + newDonut);
 	    							editCommands.push(new EditDonutCmd(oldDonut, newDonut));
 	    							editCommands.peek().execute();
 	    							frame.commandList.append(line + "\n");
 	    							commands.add(line);
 	    							frame.repaint();
 	    						} else if(oldShape instanceof HexagonAdapter) {
+	    							System.out.println("Usao sam u edit hex");
 	    							HexagonAdapter oldHexagon = (HexagonAdapter)model.get(model.getShapes().indexOf((HexagonAdapter)oldShape));
 	    							HexagonAdapter newHexagon = (HexagonAdapter)newShape;
-	    							System.out.println(oldHexagon + " " + newHexagon);
 	    							editCommands.push(new EditHexagonCmd(oldHexagon, newHexagon));
 	    							editCommands.peek().execute();
 	    							frame.commandList.append(line + "\n");
 	    							commands.add(line);
 	    							frame.repaint();
+	    							//EDITED!Hexagon->Center:X=304,Y=401,radius=60 Color:java.awt.Color[r=0,g=0,b=0],InnerColor:java.awt.Color[r=255,g=255,b=255]/Hexagon->Center:X=304,Y=401,radius=60 Color:java.awt.Color[r=0,g=0,b=0],InnerColor:java.awt.Color[r=153,g=0,b=153]
+	    							//EDITED!Hexagon->Center:X=187,Y=230,radius=100 Color:java.awt.Color[r=153,g=255,b=204],InnerColor:java.awt.Color[r=102,g=0,b=255]/Hexagon->Center:X=187,Y=230,radius=100 Color:java.awt.Color[r=153,g=255,b=204],InnerColor:java.awt.Color[r=255,g=255,b=102]
 	    						}
 	    					}
 	    					tempCommands.clear();
